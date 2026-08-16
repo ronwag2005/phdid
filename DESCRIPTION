@@ -1,0 +1,45 @@
+Package: phdid
+Title: Partial Homogeneity in Staggered Difference-in-Differences
+Version: 0.1.0
+Authors@R: c(
+    person("Rohan", "Wagle", email = "rohan.wagle_ug2023@ashoka.edu.in",
+           role = c("aut", "cre", "cph")),
+    person("Parush", "Arora",
+           role = c("aut", "cph")))
+Description: Estimation and specification testing for staggered
+    difference-in-differences designs under partial homogeneity of the
+    cohort-time average treatment effects (CATTs). Implements the Dirichlet
+    Process mixture estimator ('Bayes-PH') via a collapsed Gibbs sampler,
+    which marginalizes over the unknown partition of the cohort-time cells
+    and reports co-clustering probabilities, and the 'l0'-penalized
+    partial-homogeneity estimator ('l0-PH'), which arises as the
+    fixed-variance maximum a posteriori partition under a pairwise
+    partition prior. Also provides specification tests for whether the
+    cohort-time effects carry recoverable heterogeneity at all, sampler
+    diagnostics including exact partition enumeration for small designs,
+    and a calibrated partial-homogeneity data-generating process. All
+    estimators accept a vector of first-stage cohort-time effects together
+    with their joint sampling covariance, so any heterogeneity-robust
+    first-stage estimator may be used. Methods are described in Arora and
+    Wagle (2026), "Partial Homogeneity in Staggered
+    Difference-in-Differences".
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1.0)
+Imports:
+    stats,
+    utils,
+    graphics,
+    grDevices
+Suggests:
+    did (>= 2.1.0),
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/ronwag2005/phdid
+BugReports: https://github.com/ronwag2005/phdid/issues
+Config/roxygen2/version: 8.1.0

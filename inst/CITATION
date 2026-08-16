@@ -1,0 +1,28 @@
+citHeader("To cite phdid in publications, please cite the paper the methods come from:")
+
+bibentry(
+  bibtype  = "Unpublished",
+  title    = "Partial Homogeneity in Staggered Difference-in-Differences",
+  author   = c(person("Parush", "Arora"), person("Rohan", "Wagle")),
+  year     = "2026",
+  note     = "Working paper, Department of Economics, Ashoka University",
+  textVersion = paste(
+    "Arora, Parush and Rohan Wagle (2026).",
+    "Partial Homogeneity in Staggered Difference-in-Differences.",
+    "Working paper, Department of Economics, Ashoka University."
+  )
+)
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "phdid: Partial Homogeneity in Staggered Difference-in-Differences",
+  author   = c(person("Rohan", "Wagle"), person("Parush", "Arora")),
+  year     = "2026",
+  note     = "R package version 0.1.0",
+  url      = "https://github.com/ronwag2005/phdid",
+  textVersion = paste(
+    "Wagle, Rohan and Parush Arora (2026).",
+    "phdid: Partial Homogeneity in Staggered Difference-in-Differences.",
+    "R package version 0.1.0. https://github.com/ronwag2005/phdid"
+  )
+)

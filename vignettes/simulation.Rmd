@@ -1,0 +1,175 @@
+---
+title: "When partial homogeneity helps, and when it does not"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{When partial homogeneity helps, and when it does not}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+The estimators in this package buy precision by pooling cohort-time effects
+that share a common value. Whether that trade is worth making depends entirely
+on whether the distinct effects are separated enough to be told apart. This
+vignette reproduces, at reduced scale, the Monte Carlo of the paper's
+Section 4, which is where that boundary is mapped.
+
+```{r libs}
+library(phdid)
+set.seed(1)
+```
+
+## The design
+
+```{r design}
+des <- ph_design(N = 2000, T = 10, cohorts = c(0, 3, 5, 7))
+des
+```
+
+Four cohorts, one never treated, giving `r 18` post-treatment cells. The unit
+and time fixed effects are removed by the within transformation, so the
+estimators' sampling behaviour is driven entirely by the errors.
+
+## The two dials
+
+The truth is parameterised by two numbers.
+
+`m_star` is the true number of distinct effects: 1 is fully homogeneous, where
+pooling is correct; `K` is fully heterogeneous, where the flexible estimator is
+correct; anything in between is the partial homogeneity that motivates the
+method.
+
+`delta` is the **separation**: the distance between adjacent group means in
+standard errors of the flexible estimates. It is unit-free, and it is the
+variable that decides whether the partition can be recovered at all.
+
+```{r truth}
+truth <- ph_truth(des, m_star = 6, delta = 6)
+table(truth$labels)
+round(sort(unique(truth$tau)), 3)
+```
+
+A single draw is a `ph_data` object like any other, so every estimator in the
+package applies to it:
+
+```{r draw}
+d <- ph_sample(des, truth)
+l0_ph(d)$m          # groups recovered
+adjusted_rand(l0_ph(d)$partition, truth$labels)
+```
+
+## Precision under partial homogeneity
+
+The headline claim is that at partial homogeneity the feasible estimators cut
+the sampling variance of the cohort-time effects substantially relative to
+flexible TWFE while remaining essentially unbiased.
+
+The Bayesian estimator dominates the run time, since each replication runs a
+full chain. The paper uses 500 replications; here we use far fewer so the
+vignette builds quickly. Expect noticeably noisier numbers than the published
+tables.
+
+```{r sim-main}
+res <- sim_study(
+  des, m_star = 6, delta = 6, R = 25,
+  bayes_args = list(iters = 400, burn = 100),
+  seed = 11, progress = FALSE
+)
+res[, c("method", "var_ratio", "abs_bias", "ari", "cover_CATT", "cover_ATT")]
+```
+
+Three patterns to look for, all of which the full-scale experiment shows
+sharply.
+
+**Pooled TWFE is always the most precise and always unusable for cohort-time
+effects.** Its variance ratio sits near 0.14 regardless of the truth, but under
+any heterogeneity it is severely biased, and its intervals — short and centred
+on the wrong estimand — cover at around 0.04.
+
+**At partial homogeneity the feasible estimators approach the infeasible
+oracle.** In the paper's full experiment they cut the CATT sampling variance by
+26–52% relative to flexible TWFE while remaining essentially unbiased, and
+recover the partition well.
+
+**They degrade correctly at the extremes.** At `m_star = 1` they shrink toward
+pooling; at `m_star = K` any pooling hurts and flexible is preferred.
+
+## The separation boundary
+
+This is the part that matters most in practice. Fix the number of distinct
+effects and vary how far apart they are.
+
+```{r sim-delta}
+grid <- do.call(rbind, lapply(c(3, 6, 12), function(delta) {
+  sim_study(des, m_star = 6, delta = delta, R = 15,
+            methods = c("flexible", "oracle", "l0"),
+            seed = 100 + delta, progress = FALSE)
+}))
+grid[, c("method", "delta", "var_ratio", "ari")]
+```
+
+At `delta = 3` the partition cannot be recovered reliably, and the selection
+noise erases — indeed reverses — the variance advantage: the feasible
+estimators are *less* precise than flexible TWFE. As separation grows the gap
+to the oracle closes, and by `delta = 12` the ℓ₀ estimator essentially attains
+the oracle variance reduction with near-perfect recovery.
+
+The practical message is that these methods deliver their promised gains when
+heterogeneity is "clumpy" — a modest number of well-separated effect levels —
+and should not be expected to when the effects form a near-continuum.
+
+## Where the two estimators genuinely differ
+
+Not on variance, but on inference. When the partition is uncertain, the ℓ₀
+plug-in interval treats a possibly-wrong grouping as known, and its coverage
+collapses; the posterior averages over partitions and degrades gracefully.
+
+```{r sim-coverage}
+cov_grid <- do.call(rbind, lapply(c(3, 12), function(delta) {
+  sim_study(des, m_star = 6, delta = delta, R = 15,
+            methods = c("flexible", "l0", "bayes"),
+            bayes_args = list(iters = 400, burn = 100),
+            seed = 200 + delta, progress = FALSE)
+}))
+cov_grid[, c("method", "delta", "cover_CATT", "len_CATT", "cover_ATT")]
+```
+
+In the paper's full experiment, at low separation the ℓ₀ plug-in CATT coverage
+falls to 0.57–0.62 while the Bayes-PH credible intervals hold 0.79–0.81; where
+the effects are separable both attain near-nominal coverage.
+
+Two further observations from that experiment are worth carrying into applied
+work. The **overall ATT is well calibrated everywhere** for both estimators,
+because aggregation averages out the cell-level errors — it is the cohort-time
+intervals where the regime bites. And honest uncertainty under partition
+selection comes not from adjusting the variance but from averaging over the
+partition, which is what the posterior does and what no standard-error
+correction to the ℓ₀ interval can replicate. Sample splitting does not rescue
+it either: halving the sample degrades recovery, and a wrongly merged partition
+injects a specification bias that a correctly sized standard error cannot undo.
+
+## Reproducing a published row
+
+The tables in the paper use 500 replications and the full Gibbs settings. One
+row costs hours rather than seconds:
+
+```{r full, eval = FALSE}
+res_full <- sim_study(
+  des, m_star = 6, delta = 6, R = 500,
+  bayes_args = list(iters = 4000, burn = 1000),
+  seed = 1234
+)
+```
+
+## References
+
+Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
+Difference-in-Differences, Section 4.

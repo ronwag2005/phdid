@@ -1,0 +1,236 @@
+---
+title: "Minimum wages and teen employment: recovering partial homogeneity"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Minimum wages and teen employment: recovering partial homogeneity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  eval = requireNamespace("did", quietly = TRUE)
+)
+```
+
+This vignette works through the paper's first application: the county-level
+analysis of minimum wages and teen employment from Callaway and Sant'Anna
+(2021). It is the case where the cohort-time effects carry genuine,
+recoverable heterogeneity, and the method finds a partially homogeneous
+structure that roughly halves the variance of the pooled cells while leaving
+the headline conclusion intact.
+
+```{r libs}
+library(phdid)
+library(did)
+data(mpdta, package = "did")
+```
+
+## The first stage
+
+`phdid` does not estimate cohort-time effects itself. It takes them from
+whichever heterogeneity-robust estimator suits the design, together with their
+**joint** sampling covariance. Here that is the Callaway–Sant'Anna estimator,
+whose influence functions give the exact covariance.
+
+Fit with `bstrap = FALSE` so that the analytical covariance is computed.
+
+```{r first-stage}
+first <- att_gt(
+  yname = "lemp", tname = "year", idname = "countyreal",
+  gname = "first.treat", control_group = "notyettreated",
+  data = mpdta, bstrap = FALSE, cband = FALSE
+)
+
+d <- ph_data(first)
+d
+```
+
+`ph_data()` has kept the seven post-treatment cells, taken
+$\hat\Sigma = V_{\text{analytical}} / n$, and weighted the cells by cohort size
+so that the overall effect is population weighted.
+
+The covariance is dense, and that matters. The cells share counties, so their
+estimates are correlated. Remark 1 of the paper is explicit that using the
+exact cross-cell covariance is what makes the reported intervals honest: the
+diagonal shortcut understates the posterior variance of aggregates and can
+misstate individual co-clustering probabilities badly.
+
+## Is there anything to recover?
+
+Ask before grouping. Both estimators will partition pure noise if asked to.
+
+```{r homogeneity}
+homogeneity_test(d)
+```
+
+The common-effect null is decisively rejected, and roughly four fifths of the
+observed cross-cell dispersion is genuine rather than sampling noise. The
+descriptive signal-to-noise ratio of 2.25 is the paper's observation that the
+cross-cell dispersion (0.050) is more than twice the typical standard error
+(0.022).
+
+A caution the paper makes explicitly: this descriptive ratio is *not* the
+separation $\delta$ of the simulation section, which is defined on the true
+adjacent-group gaps and the full joint covariance. It signals that there is
+recoverable heterogeneity without fixing its exact position on that scale. The
+co-clustering results below assess that directly.
+
+## One partition to report
+
+```{r l0}
+fit_l0 <- l0_ph(d)
+fit_l0
+```
+
+This reproduces Table 6 of the paper. The seven cells collapse into four effect
+levels: a near-zero group holding the 2004 impact effect and the recent
+cohorts' effects, the 2004 cohort's larger mature effects, its peak, and the
+lone positive cell.
+
+Pooling roughly halves the variance of the cells that share a group. Notice
+that even the singleton cells gain precision — in a non-orthogonal design the
+Gauss–Markov estimator borrows strength across the correlated cells, which is
+why Proposition 1's dominance is not confined to groups of size two or more.
+
+```{r l0-plot}
+plot(fit_l0)
+```
+
+The overall effect is essentially unchanged and slightly more precise:
+
+```{r l0-agg}
+rbind(
+  flexible = aggregate(flex_twfe(d), "overall"),
+  l0 = aggregate(fit_l0, "overall")
+)
+```
+
+The substantive conclusion — a roughly 4% teen-employment reduction — survives,
+while the estimates are summarised by a handful of interpretable levels.
+
+## Inference that admits the partition is uncertain
+
+`l0_ph()` commits to one grouping and its intervals condition on that grouping
+being correct. With only seven correlated cells that is a strong thing to
+assume. The Dirichlet Process posterior instead averages over partitions.
+
+```{r bayes}
+fit <- bayes_ph(d, alpha = 1, iters = 20000, burn = 2000, seed = 7,
+                progress = FALSE)
+fit
+```
+
+```{r bayes-agg}
+aggregate(fit, "overall")
+```
+
+### Which groupings are firm?
+
+```{r coclust}
+round(coclustering(fit), 2)
+plot(fit)
+```
+
+The small-effect cells recur together with moderate-to-high probability: the
+2004 impact effect co-clusters with the lone positive 2006:2006 cell at 0.86
+and with the 2004:2005 effect at 0.78, so a low-effect cluster is a robust
+feature. The large mature 2004 effects are more distinct, with the peak
+2004:2006 cell co-clustering with every other cell at 0.53 or below.
+
+The matrix is more diffuse than any single partition. That is not a failure —
+it is the correct report that with only seven correlated cells the finer
+grouping is genuinely uncertain. This is the honest reading the co-clustering
+is meant to deliver: a recurring coarse structure with calibrated uncertainty
+about the finer detail.
+
+## Checking the sampler
+
+With seven cells there are only $B_7 = 877$ partitions, so the posterior can be
+computed exactly and the sampler checked against it.
+
+```{r enumerate}
+exact <- enumerate_partitions(d, alpha = 1)
+exact
+
+data.frame(
+  quantity = c("E[# groups]", "overall effect", "interval lower",
+               "interval upper"),
+  gibbs = c(fit$m_mean, aggregate(fit, "overall")$estimate,
+            aggregate(fit, "overall")$conf.low,
+            aggregate(fit, "overall")$conf.high),
+  exact = c(exact$m_mean, exact$overall$mean, exact$overall$lower,
+            exact$overall$upper)
+)
+
+cat("largest co-clustering discrepancy:",
+    round(max(abs(fit$coclust - exact$coclust)), 4), "\n")
+```
+
+The two agree to within Monte Carlo error, which is the Appendix E benchmark.
+
+It is worth seeing what makes that agreement possible:
+
+```{r cov-check}
+cmp <- covariance_check(d, alpha = 1, iters = 4000, burn = 1000, seed = 1)
+cmp$summary
+```
+
+The diagonal shortcut reproduces the aggregates but moves individual
+co-clustering probabilities, which is why the exact form is the default.
+
+## How much does the prior matter?
+
+With only seven cells, quite a lot for the aggregate. Rather than fix `alpha`,
+report the path.
+
+```{r alpha, fig.height = 7}
+sens <- alpha_sensitivity(
+  d, alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100),
+  iters = 4000, burn = 1000, seed = 3
+)
+sens
+plot_alpha_sensitivity(sens)
+```
+
+The effect slides monotonically from about −0.017 under heavy pooling toward
+the flexible estimate as `alpha` grows, and is bounded away from zero only for
+`alpha` above roughly 1. As a reference point, the BIC pass above selected four
+groups, which the posterior expected number of groups matches at `alpha`
+around 14.
+
+That is offered as a reference, not a recipe. Choosing `alpha` from the data
+turns the prior into a data-dependent object, with the usual consequences of
+empirical Bayes — understated posterior uncertainty and a double use of the
+data — so showing the sensitivity is preferable to committing to a single
+value.
+
+## The event-study reading
+
+```{r dynamic}
+aggregate(fit, "dynamic")
+```
+
+The effect is small at impact and accumulates over the horizon, the familiar
+pattern of a minimum-wage effect that builds over several years.
+
+One caveat on interpretation: the composition of the event-time aggregate
+changes across the horizon. Event times 2 and 3 are identified off the 2004
+cohort alone, so the longer-run trajectory is that cohort's, and the design
+cannot say whether later cohorts would follow it. The impact-year effects, by
+contrast, are small and similar across cohorts. The partial homogeneity the
+method recovers here is largely the homogeneity of the *short-run* response
+across cohorts, with the accumulating longer-run effects carried by the 2004
+cohort's later cells kept separate.
+
+## References
+
+Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
+Difference-in-Differences.
+
+Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
+Multiple Time Periods. *Journal of Econometrics* 225(2), 200–230.

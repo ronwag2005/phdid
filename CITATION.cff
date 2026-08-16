@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the paper."
+title: "phdid: Partial Homogeneity in Staggered Difference-in-Differences"
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/ronwag2005/phdid"
+type: software
+authors:
+  - family-names: Wagle
+    given-names: Rohan
+    affiliation: "Department of Economics, Ashoka University"
+  - family-names: Arora
+    given-names: Parush
+    affiliation: "Department of Economics, Ashoka University"
+abstract: >-
+  Estimation and specification testing for staggered difference-in-differences
+  designs under partial homogeneity of the cohort-time average treatment
+  effects. Implements a Dirichlet Process mixture estimator via a collapsed
+  Gibbs sampler and an l0-penalised partial-homogeneity estimator, together
+  with specification tests for recoverable heterogeneity and sampler
+  diagnostics including exact partition enumeration.
+keywords:
+  - difference-in-differences
+  - staggered treatment
+  - treatment effect heterogeneity
+  - Dirichlet process
+  - model selection
+  - causal inference
+  - econometrics
+references:
+  - type: unpublished
+    title: "Partial Homogeneity in Staggered Difference-in-Differences"
+    year: 2026
+    authors:
+      - family-names: Arora
+        given-names: Parush
+      - family-names: Wagle
+        given-names: Rohan
