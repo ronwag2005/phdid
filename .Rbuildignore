@@ -6,3 +6,4 @@
 ^CITATION\.cff$
 ^dev$
 ^\.DS_Store$
+^docs$
