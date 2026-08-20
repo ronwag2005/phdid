@@ -1,0 +1,422 @@
+
+============================================================================
+1. FIRST STAGE AND THE THREE ph_data() ENTRY POINTS
+============================================================================
+<ph_data>  first-stage cohort-time effects for a partition analysis
+
+  Cells (K)      : 7
+  Source         : did::att_gt() influence functions
+  Units          : 500
+  Covariance     : full (cross-cell correlation retained)
+  sd(tau) / median(se) : 2.25   <- descriptive signal-to-noise
+
+      cell estimate     se weight
+ 2004:2004  -0.0194 0.0223 0.0687
+ 2004:2005  -0.0783 0.0304 0.0687
+ 2004:2006  -0.1363 0.0354 0.0687
+ 2004:2007  -0.1008 0.0344 0.0687
+ 2006:2006   0.0047 0.0163 0.1375
+ 2006:2007  -0.0412 0.0202 0.1375
+ 2007:2007  -0.0261 0.0167 0.4502
+
+  Use homogeneity_test() to ask whether there is heterogeneity to recover,
+  then l0_ph() or bayes_ph() to recover it.
+  [PASS] K post-treatment cells  (     7 vs      7)
+  [PASS] units  (   500 vs    500)
+  [PASS] covariance is non-diagonal (Remark 1)
+  [PASS] cell labels  (2004:2004, 2004:2005, 2004:2006, 2004:2007, 2006:2006, 2006:2007, 2007:2007 vs 2004:2004, 2004:2005, 2004:2006, 2004:2007, 2006:2006, 2006:2007, 2007:2007)
+  [PASS] weights sum to one  (     1 vs      1)
+  [PASS] Table 6 ATT(g,t)  (-0.019, -0.078, -0.136, -0.101,  0.005, -0.041, -0.026 vs -0.019, -0.078, -0.136, -0.101,  0.005, -0.041, -0.026)
+  [PASS] Table 6 standard errors  ( 0.022,   0.03,  0.035,  0.034,  0.016,   0.02,  0.017 vs  0.022,   0.03,  0.035,  0.034,  0.016,   0.02,  0.017)
+  [PASS] pair route reproduces the fit exactly (Lemma 1)
+
+  flexible TWFE on the micro panel:
+2004:2004 2004:2005 2004:2006 2004:2007 2006:2006 2006:2007 2007:2007 
+  -0.0194   -0.0783   -0.1361   -0.1047    0.0025   -0.0392   -0.0431 
+  [PASS] panel route recovers the same 7 cells  (     7 vs      7)
+  [PASS] panel route estimates a variance
+  [PASS] panel route agrees with CS on the impact cell
+
+============================================================================
+2. BENCHMARK CORNERS: FLEXIBLE AND POOLED
+============================================================================
+  [PASS] flexible returns the first stage unchanged  (-0.019372, -0.078319, -0.13627, -0.10081, 0.0046609, -0.041224, -0.026054 vs -0.019372, -0.078319, -0.13627, -0.10081, 0.0046609, -0.041224, -0.026054)
+  [PASS] flexible covariance is the first-stage covariance
+  [PASS] flexible deviance is zero  (1.0658e-14 vs      0)
+  [PASS] flexible has K groups  (     7 vs      7)
+  [PASS] pooled has one group  (     1 vs      1)
+  [PASS] pooled is a single repeated value  (     1 vs      1)
+
+  overall ATT  flexible -0.0398 (se 0.0117)   pooled -0.0104 (se 0.0099)
+  [PASS] flexible overall ATT (paper: -0.040)  ( -0.04 vs  -0.04)
+  [PASS] flexible overall SE (paper: 0.012)  ( 0.012 vs  0.012)
+  [PASS] pooled is more precise than flexible
+
+============================================================================
+3. SPECIFICATION TEST: IS THERE HETEROGENEITY TO RECOVER?
+============================================================================
+<homogeneity_test>  is there heterogeneity to recover?
+
+1. Common-effect test (pooled GLS deviance, exact covariance)
+     chi-squared = 25.29 on 6 df,  p = 0.000302
+
+2. Dispersion decomposition
+     observed cross-cell sd    : 0.05014
+     expected under a common effect : 0.02240
+     heterogeneity sd (excess) : 0.04485
+     heterogeneity share       : 80%
+     signal-to-noise           : 2.24
+     sd(tau)/median(se)        : 2.25   (descriptive)
+
+--------------------------------------------------------------------
+Reading: recoverable heterogeneity.
+  The spread across cells clearly exceeds what sampling noise would produce, so
+  there is structure for the partition model to find. Proceed to l0_ph() for a
+  point partition and bayes_ph() for inference, and check the co-clustering
+  matrix to see which groupings are firm.
+  [PASS] chi-square statistic equals the pooled GLS deviance  (25.287 vs 25.287)
+  [PASS] chi-square df  (     6 vs      6)
+  [PASS] common effect is rejected
+  [PASS] heterogeneity share is substantial
+  [PASS] observed cross-cell sd (paper: 0.050)  (  0.05 vs   0.05)
+  [PASS] descriptive SNR sd(tau)/median(se) (paper: >2)
+
+  -- placebo branch, verified on synthetic data --
+    null p-values over 200 draws: mean 0.427, 8.5% below 0.05
+  [PASS] placebo p-values are uniform under the null (mean ~ 0.5)
+  [PASS] placebo test holds its nominal 5% size
+  [PASS] placebo test rejects real heterogeneity
+  [PASS] signal-to-noise above one under heterogeneity
+
+============================================================================
+4. THE l0-PENALISED ESTIMATOR
+============================================================================
+<l0_ph>  l0-penalised partial-homogeneity estimator
+
+  Cells      : 7
+  Groups (m) : 4   (selected by BIC, n = 7 in the penalty)
+  Search     : greedy agglomerative (Appendix B)
+  Partition  : {2004:2004,2006:2007,2007:2007} {2004:2005,2004:2007} {2004:2006} {2006:2006}
+
+      cell flexible     se group grouped var_ratio
+ 2004:2004  -0.0194 0.0223     1 -0.0285      0.28
+ 2006:2007  -0.0412 0.0202     1 -0.0285      0.33
+ 2007:2007  -0.0261 0.0167     1 -0.0285      0.49
+ 2004:2005  -0.0783 0.0304     2 -0.0871      0.77
+ 2004:2007  -0.1008 0.0344     2 -0.0871      0.61
+ 2004:2006  -0.1363 0.0354     3 -0.1401      0.78
+ 2006:2006   0.0047 0.0163     4  0.0106      0.78
+
+  Mean variance ratio among pooled cells: 0.50
+
+  These intervals condition on the selected partition being correct.
+  Remark 3: they can under-cover, badly so when the partition is uncertain
+  (0.57-0.62 in the paper's hard regimes). Use bayes_ph() for inference.
+
+  Table 6 as published (rows ordered as in the paper):
+      cell    att    se l0_group grouped var_ratio
+ 2004:2004 -0.019 0.022        1  -0.028      0.28
+ 2006:2007 -0.041 0.020        1  -0.028      0.33
+ 2007:2007 -0.026 0.017        1  -0.028      0.49
+ 2004:2005 -0.078 0.030        2  -0.087      0.77
+ 2004:2007 -0.101 0.034        2  -0.087      0.61
+ 2004:2006 -0.136 0.035        3  -0.140      0.78
+ 2006:2006  0.005 0.016        4   0.011      0.78
+  [PASS] BIC selects 4 groups (paper: 4)  (     4 vs      4)
+  [PASS] Table 6 grouped effects  (-0.14012, -0.087109, -0.028462, 0.010596 vs  -0.14, -0.087, -0.029,  0.011)
+  [PASS] three groups match the paper exactly at 3 dp  ( -0.14, -0.087,  0.011 vs  -0.14, -0.087,  0.011)
+  [PASS] Table 6 variance ratios  (  0.28,   0.33,   0.49,   0.77,   0.61,   0.78,   0.78 vs   0.28,   0.33,   0.49,   0.77,   0.61,   0.78,   0.78)
+  [PASS] pooling roughly halves the variance of pooled cells (paper)  (   0.5 vs    0.5)
+  [PASS] the near-zero group holds the three small cells  (2004:2004, 2006:2007, 2007:2007 vs 2004:2004, 2006:2007, 2007:2007)
+
+  overall ATT  flexible -0.0398 (se 0.0117)   l0 -0.0388 (se 0.0115)
+  [PASS] l0 overall ATT (paper: -0.039)  (-0.039 vs -0.039)
+  [PASS] l0 overall SE (paper: 0.012)  ( 0.012 vs  0.012)
+  [PASS] l0 is at least as precise as flexible overall
+  [PASS] even singleton cells gain precision (Gauss-Markov borrowing)
+
+  agglomeration path:
+ m   deviance rss     bic cross_group_pairs merge_cost
+ 1 2.5287e+01  NA 27.2330                 0  42.847765
+ 2 1.6801e+01  NA 20.6924                12   5.529099
+ 3 6.9365e+00  NA 12.7742                14   4.050945
+ 4 1.0222e+00  NA  8.8059                17   0.794080
+ 5 7.1890e-01  NA 10.4485                19   0.685969
+ 6 5.7446e-02  NA 11.7329                20   0.078747
+ 7 1.0658e-14  NA 13.6214                21         NA
+  [PASS] path has K rows  (     7 vs      7)
+  [PASS] deviance is monotone in m
+  [PASS] deviance vanishes at the flexible end  (1.0658e-14 vs      0)
+  [PASS] BIC is minimised at the selected m  (     4 vs      4)
+  [PASS] the merge path is nested
+  [PASS] select = 'lambda' runs and returns a partition
+  [PASS] select = 'm' honours the request  (     3 vs      3)
+  [PASS] exact-cost search returns a valid partition
+
+  groups by rule:  BIC 4 | lambda=0.5 6 | m=3 3 | exact-cost 4
+  [PASS] n_bic = K gives 4 groups  (     4 vs      4)
+  [PASS] n_bic = n_units gives 3 groups  (     3 vs      3)
+
+============================================================================
+5. THE DIRICHLET PROCESS ESTIMATOR
+============================================================================
+  (20,000 sweeps in 17.0 s)
+<bayes_ph>  Dirichlet Process partial-homogeneity posterior
+
+  Cells           : 7
+  Concentration   : alpha = 1  (prior E[m] = 2.08)
+  Base measure    : N(-0.04122, 0.2514)
+  Sampler         : 1 chain(s), 20000 sweeps, 2000 burn-in
+  Assignment moves: exact covariance
+  Error variance  : fixed
+
+  Posterior E[# groups] : 2.20
+
+      cell flexible posterior   lower   upper
+ 2004:2004  -0.0194   -0.0108 -0.0403  0.0208
+ 2004:2005  -0.0783   -0.0197 -0.0734  0.0139
+ 2004:2006  -0.1363   -0.0614 -0.1315 -0.0039
+ 2004:2007  -0.1008   -0.0314 -0.0986  0.0072
+ 2006:2006   0.0047   -0.0065 -0.0332  0.0276
+ 2006:2007  -0.0412   -0.0348 -0.0820  0.0013
+ 2007:2007  -0.0261   -0.0220 -0.0560  0.0048
+
+  Intervals are 2.5-97.5% posterior percentiles and already marginalize
+  over the partition. Use coclustering() to see the grouping structure and
+  aggregate() for the overall ATT or an event study.
+  [PASS] posterior E[# groups] (Appendix E: 2.20)  (2.1969 vs    2.2)
+  [PASS] posterior means lie between pooled and flexible
+  [PASS] credible intervals bracket the posterior means
+
+  overall ATT, partition-averaged:
+     term estimate std.error conf.low  conf.high
+1 overall -0.02405   0.01199 -0.04763 -0.0006204
+  [PASS] overall ATT (Appendix E: -0.024)  (-0.024 vs -0.024)
+  [PASS] overall lower bound (Appendix E: -0.047)  (-0.047625 vs -0.047)
+  [PASS] overall upper bound (Appendix E: -0.000)  (-0.00062043 vs      0)
+  [PASS] point estimate equals weights times posterior mean  (-0.024052 vs -0.024052)
+
+  event-study profile:
+  term estimate std.error conf.low  conf.high
+1  e=0 -0.01758   0.01154 -0.04087  0.0047146
+2  e=1 -0.02975   0.01769 -0.06727  0.0007698
+3  e=2 -0.06142   0.03347 -0.13150 -0.0038713
+4  e=3 -0.03143   0.02689 -0.09857  0.0071660
+  [PASS] event times 0 through 3 are reported  (e=0, e=1, e=2, e=3 vs e=0, e=1, e=2, e=3)
+  [PASS] effect accumulates over the horizon (paper 5.1)
+
+  by cohort:
+    term estimate std.error conf.low conf.high
+1 g=2004 -0.03083   0.01904 -0.07592  0.001116
+2 g=2006 -0.02061   0.01470 -0.05245  0.005405
+3 g=2007 -0.02201   0.01561 -0.05597  0.004812
+
+  by calendar year:
+    term estimate std.error conf.low conf.high
+1 t=2004 -0.01077   0.01551 -0.04027 0.0207696
+2 t=2005 -0.01969   0.02141 -0.07341 0.0139466
+3 t=2006 -0.02477   0.01803 -0.05977 0.0084976
+4 t=2007 -0.02567   0.01438 -0.05586 0.0006748
+  [PASS] by-cohort aggregation covers the three cohorts  (     3 vs      3)
+  [PASS] by-calendar aggregation covers four years  (     4 vs      4)
+
+  custom aggregator (2004 cohort only): -0.0308 [-0.0759, 0.0011]
+  [PASS] custom weights are accepted  (     1 vs      1)
+
+  posterior co-clustering probabilities:
+          2004:2004 2004:2005 2004:2006 2004:2007 2006:2006 2006:2007 2007:2007
+2004:2004      1.00      0.77      0.13      0.57      0.85      0.46      0.70
+2004:2005      0.77      1.00      0.21      0.70      0.69      0.56      0.73
+2004:2006      0.13      0.21      1.00      0.44      0.09      0.54      0.34
+2004:2007      0.57      0.70      0.44      1.00      0.50      0.71      0.70
+2006:2006      0.85      0.69      0.09      0.50      1.00      0.37      0.62
+2006:2007      0.46      0.56      0.54      0.71      0.37      1.00      0.68
+2007:2007      0.70      0.73      0.34      0.70      0.62      0.68      1.00
+  [PASS] co-clustering diagonal is one  (     1,      1,      1,      1,      1,      1,      1 vs      1,      1,      1,      1,      1,      1,      1)
+  [PASS] co-clustering is symmetric  (     0 vs      0)
+  [PASS] co-clustering lies in [0,1]
+  [PASS] 2004:2004 with 2006:2006 (paper: 0.86)  (0.85172 vs   0.86)
+  [PASS] 2004:2004 with 2004:2005 (paper: 0.77)  (0.77433 vs   0.77)
+  [PASS] peak 2004:2006 with all others <= 0.54 (paper)
+
+  point partition (VI loss, 2 groups):
+    {2004:2004,2004:2005,2004:2007,2006:2006,2006:2007,2007:2007} {2004:2006}
+  [PASS] point_partition(VI) is a valid partition
+
+  point partition (binder loss, 2 groups):
+    {2004:2004,2004:2005,2004:2007,2006:2006,2006:2007,2007:2007} {2004:2006}
+  [PASS] point_partition(binder) is a valid partition
+  [PASS] confint returns K x 2 with cell names
+  [PASS] coef returns named cell effects
+  [PASS] vcov on a ph_fit is K x K
+  [PASS] alpha_for_groups inverts expected_groups  (     4 vs      4)
+  [PASS] prior E[m] at alpha = 1, K = 7  (  2.08 vs   2.08)
+  [PASS] paper's alpha = 7 gives prior E[m] ~ K/2 = 9  (8.9108 vs      9)
+
+============================================================================
+6. EXACT ENUMERATION: THE APPENDIX E BENCHMARK
+============================================================================
+<ph_enumeration>  exact partition posterior
+
+  Cells           : 7
+  Partitions       : 877 (enumerated in full)
+  Concentration   : alpha = 1
+  Base measure    : N(-0.04122, 0.2514)
+
+  Posterior E[# groups] : 2.195
+  Overall effect        : -0.0240  [-0.0477, -0.0003]
+
+  Most probable partitions:
+    0.227  {2004:2004,2004:2005,2004:2007,2006:2006,2006:2007,2007:2007} {2004:2006}
+    0.102  {2004:2004,2004:2005,2004:2007,2006:2006,2007:2007} {2004:2006,2006:2007}
+    0.083  {2004:2004,2004:2005,2006:2006} {2004:2006,2004:2007,2006:2007,2007:2007}
+    0.080  {2004:2004,2004:2005,2004:2006,2004:2007,2006:2006,2006:2007,2007:2007}
+    0.075  {2004:2004,2004:2005,2006:2006,2007:2007} {2004:2006,2004:2007,2006:2007}
+  [PASS] B_7 = 877 partitions enumerated  (   877 vs    877)
+  [PASS] posterior probabilities sum to one  (     1 vs      1)
+  [PASS] exact E[# groups] (Appendix E: 2.20)  (   2.2 vs    2.2)
+  [PASS] exact overall ATT (Appendix E: -0.024)  (-0.024 vs -0.024)
+  [PASS] exact interval (Appendix E: [-0.048, -0.000])  (-0.048,     -0 vs -0.048,      0)
+
+  Gibbs vs exact enumeration
+    E[# groups]      2.197  vs  2.195
+    overall ATT      -0.0241 vs  -0.0240
+    interval         [-0.0476, -0.0006]  vs  [-0.0477, -0.0003]
+    max co-clustering gap  0.0114   (paper reports 0.012)
+  [PASS] sampler matches exact E[# groups]  (2.1969 vs 2.1953)
+  [PASS] sampler matches exact overall ATT  (-0.024052 vs -0.023975)
+  [PASS] max co-clustering gap within Monte Carlo error
+
+============================================================================
+7. DIAGNOSTICS
+============================================================================
+<ph_rhat>  sampler convergence diagnostics
+
+  4 chain(s), 3000 sweeps each, 500 burn-in
+
+         quantity  rhat  ess    mean     sd
+   overall effect 1.000 7659 -0.0243 0.0120
+ number of groups 1.000 5075  2.2027 0.6113
+
+  Largest R-hat: 1.000  (converged)
+  [PASS] R-hat at 1.00 for both quantities (Appendix E)
+  [PASS] effective sample sizes are large
+  [PASS] four chains recorded  (     4 vs      4)
+
+  exact vs diagonal assignment moves:
+              quantity    exact diagonal       gap
+        overall effect -0.02434 -0.02723 0.0028870
+      overall CI width  0.04656  0.04728 0.0007138
+           E[# groups]  2.20100  2.63867 0.4376667
+ max co-clustering gap       NA       NA 0.6966667
+  [PASS] aggregate is barely affected by the shortcut
+  [PASS] individual co-clustering probabilities ARE affected
+
+  -> the diagonal shortcut moves a co-clustering probability by 0.70
+     while leaving the aggregate unchanged. This is why marginal = 'exact'
+     is the default (Remark 1, Appendix E).
+
+  sensitivity to alpha:
+ alpha    term estimate conf.low conf.high m_mean prior_m
+   0.1 overall -0.01701 -0.04377  0.007188  1.497  0.4263
+   0.5 overall -0.02186 -0.04675  0.002799  1.945  1.3540
+   1.0 overall -0.02434 -0.04827 -0.001462  2.209  2.0794
+   2.0 overall -0.02611 -0.05166 -0.002636  2.494  3.0082
+   5.0 overall -0.02923 -0.05386 -0.004848  3.110  4.3773
+  14.0 overall -0.03265 -0.05628 -0.009581  4.079  5.6765
+  50.0 overall -0.03665 -0.05994 -0.013519  5.535  6.5514
+ 100.0 overall -0.03834 -0.06147 -0.014202  6.100  6.7659
+
+  anchors: pooled -0.0104, flexible -0.0398
+  [PASS] the path is monotone toward the flexible anchor
+  [PASS] heavy pooling pulls the effect toward the pooled anchor
+  [PASS] large alpha approaches the flexible anchor
+  [PASS] posterior group count rises with alpha
+
+  posterior E[# groups] at alpha = 14: 4.08  (BIC selected 4)
+  [PASS] alpha ~ 14 reproduces the BIC group count (paper 5.1)
+
+============================================================================
+8. ANALYTIC IDENTITIES THE THEORY FORCES
+============================================================================
+  [PASS] R' Omega (tau - R phi) = 0  (8.5265e-14 vs      0)
+  [PASS] variance ratio equals 1 / |C_p| (eq. 16)  (0.33333, 0.33333, 0.33333,    0.2,    0.2,    0.2,    0.2,    0.2 vs 0.33333, 0.33333, 0.33333,    0.2,    0.2,    0.2,    0.2,    0.2)
+  [PASS] list and vector partitions agree
+  [PASS] partition labels are canonicalised
+  [PASS] enumerated posterior is proper  (     1 vs      1)
+  [PASS] ARI is 1 for identical partitions  (     1 vs      1)
+  [PASS] ARI is relabelling invariant  (     1 vs      1)
+
+============================================================================
+9. SIMULATION TOOLS
+============================================================================
+<ph_design>  simulated staggered panel
+
+  N = 2000 units, T = 10 periods, 20000 observations
+  Cohorts: 0, 3, 5, 7  (0 = never treated)
+  K = 18 post-treatment cohort-time cells
+  sigma = 1;  mean flexible SE = 0.0544
+
+  Separation delta is measured in units of that flexible SE,
+  so ph_truth(des, m_star = 6, delta = 6) puts adjacent group means
+  six flexible standard errors apart.
+  [PASS] default design has K = 18 (paper 4.1)  (    18 vs     18)
+  [PASS] default design has 2000 units over 10 periods  (  2000,     10 vs   2000,     10)
+  [PASS] m_star groups created  (     6 vs      6)
+  [PASS] groups are near-equal in size
+  [PASS] adjacent group means sit delta flexible SEs apart  (0.3266, 0.3266, 0.3266, 0.3266, 0.3266 vs 0.3266, 0.3266, 0.3266, 0.3266, 0.3266)
+  [PASS] a simulated draw is a ph_data object
+  [PASS] a simulated draw carries the micro-panel quantities
+  [PASS] the oracle recovers the truth well on one draw
+
+  small Monte Carlo (30 reps, m* = 6, delta = 6):
+   method var_ratio abs_bias   ari cover_CATT cover_ATT
+   pooled     0.178  0.48990 0.000     0.0556    0.0667
+ flexible     1.000  0.00783 0.000     0.9574    0.9333
+   oracle     0.388  0.00444 1.000     0.9556    0.9667
+       l0     0.573  0.00598 0.975     0.9167    0.9333
+    bayes     0.567  0.00550 0.979     0.9296    0.9667
+  [PASS] flexible is the variance benchmark  (     1 vs      1)
+  [PASS] pooled is far more precise than flexible
+  [PASS] pooled is badly biased under heterogeneity
+  [PASS] pooled coverage collapses
+  [PASS] the oracle beats flexible on variance
+  [PASS] flexible coverage is near nominal
+  [PASS] feasible estimators recover the partition well at delta = 6
+  [PASS] feasible estimators stay essentially unbiased
+  [PASS] ATT is well calibrated for every method except pooled
+
+============================================================================
+10. FIGURES
+============================================================================
+  [PASS] all six figures written
+  [PASS] no figure is empty
+
+  wrote:
+    figures/mpdta_alpha_sensitivity.png
+    figures/mpdta_coclustering.png
+    figures/mpdta_effects.png
+    figures/mpdta_l0_path.png
+    figures/mpdta_placebo_band.png
+    figures/sim_variance.png 
+
+============================================================================
+11. LEDGER
+============================================================================
+
+ section checks passed
+       1     11     11
+      10      2      2
+       2      9      9
+       3     10     10
+       4     20     20
+       5     26     26
+       6      8      8
+       7     10     10
+       8      7      7
+       9     17     17
+
+  120 checks: 120 passed, 0 failed
+  phdid 0.1.0 | R 4.6.1 | 2026-08-20
+  ledger written to mpdta_replication_ledger.csv
+
