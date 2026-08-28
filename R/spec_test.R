@@ -11,35 +11,52 @@
 #' Three assessments are reported, the first two always and the third when
 #' placebo estimates are supplied.
 #'
-#' @section 1. Model-implied homogeneity test:
-#' Under the null that all \eqn{K} cohort-time effects share a common value,
-#' \eqn{\hat\tau \sim N(\theta 1_K, \hat\Sigma)}, so the GLS deviance of the
-#' fully pooled fit is \eqn{\chi^2_{K-1}}. This is a genuine test with an exact
-#' reference distribution and it uses the full cross-cell covariance, which is
-#' what makes it trustworthy where a test built on independent standard errors
-#' would not be (Remark 1). It is the natural test implied by the paper's own
-#' model, and is reported here for every design.
+#' @section Provenance:
+#' The package is published alongside the paper, so it matters which parts of
+#' this function are the paper's and which are additions. Each block below is
+#' labelled, and the printed output carries the same tags.
 #'
-#' @section 2. Excess-dispersion heterogeneity share:
-#' The cross-cell dispersion of the estimates mixes real heterogeneity with
-#' sampling noise. Writing \eqn{M = I - 11'/K} for the centring projection, the
-#' dispersion expected under a common effect is \eqn{\mathrm{tr}(M\hat\Sigma M)
-#' / (K-1)}, so
+#' Only assessment 3 is the paper's procedure. Assessments 1 and 2 were added
+#' for this package, principally because assessment 3 requires placebo
+#' estimates that many designs cannot supply --- including the paper's own
+#' first application, whose 2004 cohort is treated from the first period of the
+#' window and so has no pre-treatment cells at all.
+#'
+#' @section 1. Common-effect test (package addition):
+#' **Not in the paper.** The paper proposes no omnibus test of the
+#' common-effect null; its only reported p-value is the randomization p of
+#' assessment 3.
+#'
+#' This test is nonetheless implied by the paper's own two-stage Gaussian
+#' likelihood (eq. 41). Under the null that all \eqn{K} cohort-time effects
+#' share a common value, \eqn{\hat\tau \sim N(\theta 1_K, \hat\Sigma)}, so
+#' the GLS deviance of the fully pooled fit is \eqn{\chi^2_{K-1}}. It is the
+#' generalised Cochran Q statistic with a full covariance rather than
+#' independent variances, and it uses the exact cross-cell covariance, which is
+#' what makes it trustworthy where a test built on independent standard errors
+#' would not be (Remark 1).
+#'
+#' @section 2. Excess-dispersion heterogeneity share (adapted):
+#' The \eqn{\max\{0, \cdot\}} decomposition and the heterogeneity share are
+#' the paper's, from Section 5.2.3. What is adapted is the noise gauge: the
+#' paper estimates it from placebo estimates as \eqn{s^2_{\mathrm{pre}}},
+#' whereas this block estimates it from the first-stage covariance, so that the
+#' decomposition is available on designs with no placebo. Writing
+#' \eqn{M = I - 11'/K} for the centring projection,
 #' \deqn{\hat\sigma^2_{\mathrm{het}} = \max\left\{0, \;
 #'   \frac{\sum_k (\hat\tau_k - \bar\tau)^2}{K-1}
-#'   - \frac{\mathrm{tr}(M \hat\Sigma M)}{K-1}\right\}}
-#' estimates the genuine component, and its ratio to the observed dispersion is
-#' the heterogeneity share. This is the covariance-based counterpart of the
-#' paper's \eqn{\hat\sigma^2_{\mathrm{het}} = \max\{0, s^2_{\mathrm{post}} -
-#' s^2_{\mathrm{pre}}\}}, using the estimator's own covariance in place of a
-#' placebo as the noise gauge.
+#'   - \frac{\mathrm{tr}(M \hat\Sigma M)}{K-1}\right\}.}
 #'
-#' @section 3. Placebo gauge and randomization test (Section 5.2.3):
-#' When the design supplies a pre-treatment summary for each cell, constructed
-#' symmetrically with the post-treatment one, no-anticipation makes it a direct
-#' internal estimate of sampling noise. The paper's second application finds
-#' \eqn{s_{\mathrm{pre}} = 0.0065} exceeding \eqn{s_{\mathrm{post}} = 0.0050},
-#' a signal-to-noise ratio of 0.77 and a zero heterogeneity share.
+#' The descriptive ratio \eqn{\mathrm{sd}(\hat\tau)/\mathrm{median}(se)}
+#' reported alongside it is the paper's, from Section 5.1.
+#'
+#' @section 3. Placebo gauge and randomization test (the paper's, Section 5.2.3):
+#' This is the paper's procedure. When the design supplies a pre-treatment
+#' summary for each cell, constructed symmetrically with the post-treatment
+#' one, no-anticipation makes it a direct internal estimate of sampling noise.
+#' The paper's second application finds \eqn{s_{\mathrm{pre}} = 0.0065}
+#' exceeding \eqn{s_{\mathrm{post}} = 0.0050}, a signal-to-noise ratio of 0.77
+#' and a zero heterogeneity share.
 #'
 #' The randomization test then exchanges each cell's pre- and post-treatment
 #' summaries. Because the exchange is internal to a cell, it holds the
@@ -47,13 +64,23 @@
 #' the test valid when the cells share controls. The observed post-treatment
 #' dispersion is compared to the resulting reference distribution.
 #'
-#' The summaries are centred within each series before exchanging. Under the
-#' null the effects share a *common* value, not a zero one, so the raw
-#' post-treatment summaries are shifted by that common effect while the
-#' pre-treatment ones are not; exchanging them unshifted would manufacture
-#' dispersion and make the test conservative. Centring removes the shift and
-#' leaves the deviations exchangeable, which is the null being tested. Set
-#' `center = FALSE` for the literal unshifted exchange.
+#' Two details are the package's rather than the paper's. The p-value carries
+#' the usual \eqn{(1 + \#\{ref \ge obs\})/(nsim + 1)} Monte Carlo
+#' correction, which guarantees it is strictly positive. And the summaries are
+#' centred within each series before exchanging, for the reason below.
+#'
+#' @section Why centring (package modification):
+#' Under the null the effects share a *common* value, not a zero one, so the
+#' raw post-treatment summaries are shifted by that common effect while the
+#' pre-treatment ones are not; exchanging them unshifted injects that shift
+#' into the reference distribution and makes the test conservative. Centring
+#' removes the shift and leaves the deviations exchangeable, which is the null
+#' actually being tested. Set `center = FALSE` for the literal unshifted
+#' exchange.
+#'
+#' In practice this matters only when the common effect is large relative to
+#' the noise. At the scale of the paper's second application the two
+#' conventions agree to three decimals, so nothing there turns on it.
 #'
 #' @param object a [ph_data] object.
 #' @param pre optional numeric vector of length K holding a pre-treatment
@@ -163,12 +190,15 @@ homogeneity_test <- function(object, pre = NULL, nsim = 10000L, center = TRUE,
 print.homogeneity_test <- function(x, ...) {
   cat("<homogeneity_test>  is there heterogeneity to recover?\n\n")
 
-  cat("1. Common-effect test (pooled GLS deviance, exact covariance)\n")
+  tag <- function(head, mark) cat(sprintf("%-46s%s\n", head, mark))
+
+  tag("1. Common-effect test (pooled GLS deviance)", "[package addition]")
   cat(sprintf("     chi-squared = %.2f on %d df,  p = %s\n",
               x$chisq$statistic, x$chisq$df, format.pval(x$chisq$p_value,
                                                          digits = 3)))
 
-  cat("\n2. Dispersion decomposition\n")
+  cat("\n")
+  tag("2. Dispersion decomposition", "[paper 5.2.3, adapted]")
   cat(sprintf("     observed cross-cell sd    : %.5f\n",
               sqrt(x$dispersion$observed)))
   cat(sprintf("     expected under a common effect : %.5f\n",
@@ -183,7 +213,8 @@ print.homogeneity_test <- function(x, ...) {
 
   if (!is.null(x$placebo)) {
     p <- x$placebo
-    cat("\n3. Placebo gauge and within-cell randomization test\n")
+    cat("\n")
+    tag("3. Placebo gauge and randomization test", "[paper 5.2.3]")
     cat(sprintf("     s_pre  (noise)            : %.5f\n", p$s_pre))
     cat(sprintf("     s_post (observed spread)  : %.5f\n", p$s_post))
     cat(sprintf("     signal-to-noise           : %.2f\n", p$snr))
@@ -197,6 +228,10 @@ print.homogeneity_test <- function(x, ...) {
 
   cat("\n", strrep("-", 68), "\n", sep = "")
   cat(verdict_text(x))
+  cat("\n  Tags mark provenance: [paper 5.2.3] is the published procedure;\n",
+      "  [package addition] and [adapted] are this package's. The reading\n",
+      "  above is the package's rule, not the paper's. See ?homogeneity_test.\n",
+      sep = "")
   invisible(x)
 }
 

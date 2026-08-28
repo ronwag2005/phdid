@@ -308,6 +308,24 @@ td code { white-space: nowrap; }
 tbody tr:last-child td { border-bottom: none; }
 .num { text-align: right; font-family: var(--f-mono); }
 
+/* provenance pills */
+.tagpill {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  vertical-align: 2px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.tagpill.paper { background: var(--accent-soft); color: var(--accent-ink); }
+.tagpill.add   { background: var(--warn-soft);   color: var(--warn); }
+.tagpill.adapt { background: var(--surface-2);   color: var(--muted); }
+
 /* callouts — the grouped-cell motif */
 .note {
   border: 1px solid var(--rule);
@@ -745,18 +763,33 @@ expected_groups(7, 1)     <span class="c">#&gt; 2.08 (the applications' alpha = 
 
 <p>Ask this before grouping anything. In the paper's second application the &#8467;<sub>0</sub> estimator splits 138 event effects into five neat bands and the DP estimator reports between 2.7 and 7.6 groups &mdash; while a randomization test cannot reject a single common effect. Below a signal-to-noise ratio of one, such groups are quantiles of noise.</p>
 
-<h4>1. Model-implied common-effect test</h4>
-<p>Under the null that all <code>K</code> effects share a common value, the GLS deviance of the fully pooled fit is <code>&chi;&sup2;</code> on <code>K &minus; 1</code> degrees of freedom. This is a genuine test with an exact reference distribution, and it uses the full cross-cell covariance &mdash; which is what makes it trustworthy where a test built on independent standard errors would not be. Reported for every design.</p>
+<div class="note care">
+  <div class="hd">Provenance</div>
+  <p>Only assessment 3 is the paper's procedure. Assessments 1 and 2 were added for this package, principally because assessment 3 needs placebo estimates that many designs cannot supply &mdash; including the paper's own first application, whose 2004 cohort is treated from the first period of the window and so has no pre-treatment cells at all. The printed output carries the same tags.</p>
+</div>
 
-<h4>2. Excess-dispersion heterogeneity share</h4>
-<p>Cross-cell dispersion mixes real heterogeneity with sampling noise. With <code>M</code> the centring projection, the dispersion expected under a common effect is <code>tr(M Sigma M)/(K-1)</code>, so the excess estimates the genuine component and its ratio to observed dispersion is the heterogeneity share. This is the covariance-based counterpart of the paper's placebo decomposition, using the estimator's own covariance as the noise gauge.</p>
+<h4>1. Common-effect test <span class="tagpill add">package addition</span></h4>
+<p><strong>This test is not in the paper.</strong> The paper proposes no omnibus test of the common-effect null; its only reported p-value is the randomization p of assessment 3.</p>
+<p>It is nonetheless implied by the paper's own two-stage Gaussian likelihood (eq. 41). Under the null that all <code>K</code> effects share a common value, the GLS deviance of the fully pooled fit is <code>&chi;&sup2;</code> on <code>K &minus; 1</code> degrees of freedom &mdash; the generalised Cochran Q statistic with a full covariance rather than independent variances. It uses the exact cross-cell covariance, which is what makes it trustworthy where a test built on independent standard errors would not be, and it is reported for every design.</p>
 
-<h4>3. Placebo gauge and randomization test</h4>
+<h4>2. Excess-dispersion heterogeneity share <span class="tagpill adapt">adapted</span></h4>
+<p>The max{0,&nbsp;&middot;} decomposition and the heterogeneity share are the paper's, from &sect;5.2.3. What is adapted is the <em>noise gauge</em>: the paper estimates it from placebo estimates as s&sup2;<sub>pre</sub>, whereas this block estimates it from the first-stage covariance, so the decomposition is available on designs with no placebo. With <code>M</code> the centring projection, the dispersion expected under a common effect is <code>tr(M Sigma M)/(K-1)</code>, and the excess over that is the genuine component.</p>
+<p>The descriptive ratio <code>sd(tau)/median(se)</code> reported alongside it is the paper's, from &sect;5.1.</p>
+
+<h4>3. Placebo gauge and randomization test <span class="tagpill paper">the paper's, &sect;5.2.3</span></h4>
 <p>Supplied only when you pass <code>pre</code> &mdash; a pre-treatment summary per cell, constructed symmetrically with the post-treatment one. Under no-anticipation it is a direct internal estimate of sampling noise. The randomization test then exchanges each cell's pre- and post-treatment summaries; because the exchange is internal to a cell, it holds the cross-cell dependence structure fixed by construction, which is what makes it valid when cells share controls.</p>
+<p>Two details here are the package's rather than the paper's: the p-value carries the usual (1&nbsp;+&nbsp;#{ref&nbsp;&ge;&nbsp;obs})/(nsim&nbsp;+&nbsp;1) Monte Carlo correction, which keeps it strictly positive; and the summaries are centred before exchanging.</p>
+
+<div class="note">
+  <div class="hd">Why <code>center = TRUE</code> is the default <span class="tagpill add">package modification</span></div>
+  <p>Under the null the effects share a <em>common</em> value, not a zero one. The post-treatment summaries are therefore shifted by that common effect while the pre-treatment ones are not, and exchanging them unshifted injects that shift into the reference distribution, making the test conservative. Centring removes the shift and leaves the deviations exchangeable, which is the null actually being tested.</p>
+  <p>It matters only when the common effect is large relative to the noise. At the scale of the paper's second application the two conventions agree to three decimals, so nothing published turns on it. Set <code>center = FALSE</code> for the literal unshifted exchange.</p>
+</div>
 
 <div class="note care">
-  <div class="hd">Why <code>center = TRUE</code> is the default</div>
-  <p>Under the null the effects share a <em>common</em> value, not a zero one. The post-treatment summaries are therefore shifted by that common effect while the pre-treatment ones are not, and exchanging them unshifted manufactures dispersion, making the test conservative. Centring removes the shift and leaves the deviations exchangeable, which is the null actually being tested. The package's test suite confirms the centred version holds its nominal size. Set <code>center = FALSE</code> for the literal unshifted exchange.</p>
+  <div class="hd">An open reconciliation</div>
+  <p>Run as described above on the paper's reported inputs (s<sub>pre</sub> = 0.0065, s<sub>post</sub> = 0.0050), this implementation returns <strong>p = 0.998</strong>, not the 0.71 the paper reports. The mechanism is arithmetic: a 50/50 exchange gives reference draws with dispersion &radic;(&frac12;s&sup2;<sub>pre</sub> + &frac12;s&sup2;<sub>post</sub>) &asymp; 0.0058, so the observed 0.0050 sits below almost every draw. Reaching 0.71 would need a ratio near 1.06 rather than the reported 1.30.</p>
+  <p>The substantive conclusion is unaffected &mdash; 0.998 fails to reject a common effect even more decisively than 0.71 does &mdash; but the exact statistic, exchange scheme, or tail convention behind the published number is not yet pinned down. Treat the reported p as the paper's and this one as the package's until that is settled.</p>
 </div>
 
 <h4>Reading the output</h4>

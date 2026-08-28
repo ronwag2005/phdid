@@ -36,6 +36,34 @@ This function is the guard against reading them as structure.
 Three assessments are reported, the first two always and the third when
 placebo estimates are supplied.
 }
+\section{Provenance}{
+
+The package is published alongside the paper, so it matters which parts of
+this function are the paper's and which are additions. Each block below is
+labelled, and the printed output carries the same tags.
+
+Only assessment 3 is the paper's procedure. Assessments 1 and 2 were added
+for this package, principally because assessment 3 requires placebo
+estimates that many designs cannot supply --- including the paper's own
+first application, whose 2004 cohort is treated from the first period of the
+window and so has no pre-treatment cells at all.
+}
+
+\section{Why centring (package modification)}{
+
+Under the null the effects share a \emph{common} value, not a zero one, so the
+raw post-treatment summaries are shifted by that common effect while the
+pre-treatment ones are not; exchanging them unshifted injects that shift
+into the reference distribution and makes the test conservative. Centring
+removes the shift and leaves the deviations exchangeable, which is the null
+actually being tested. Set \code{center = FALSE} for the literal unshifted
+exchange.
+
+In practice this matters only when the common effect is large relative to
+the noise. At the scale of the paper's second application the two
+conventions agree to three decimals, so nothing there turns on it.
+}
+
 \examples{
 # Genuinely heterogeneous effects: the test rejects a common value.
 d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))

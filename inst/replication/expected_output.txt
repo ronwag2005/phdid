@@ -57,10 +57,10 @@
 ============================================================================
 <homogeneity_test>  is there heterogeneity to recover?
 
-1. Common-effect test (pooled GLS deviance, exact covariance)
+1. Common-effect test (pooled GLS deviance)   [package addition]
      chi-squared = 25.29 on 6 df,  p = 0.000302
 
-2. Dispersion decomposition
+2. Dispersion decomposition                   [paper 5.2.3, adapted]
      observed cross-cell sd    : 0.05014
      expected under a common effect : 0.02240
      heterogeneity sd (excess) : 0.04485
@@ -74,6 +74,10 @@ Reading: recoverable heterogeneity.
   there is structure for the partition model to find. Proceed to l0_ph() for a
   point partition and bayes_ph() for inference, and check the co-clustering
   matrix to see which groupings are firm.
+
+  Tags mark provenance: [paper 5.2.3] is the published procedure;
+  [package addition] and [adapted] are this package's. The reading
+  above is the package's rule, not the paper's. See ?homogeneity_test.
   [PASS] chi-square statistic equals the pooled GLS deviance  (25.287 vs 25.287)
   [PASS] chi-square df  (     6 vs      6)
   [PASS] common effect is rejected
@@ -160,7 +164,7 @@ Reading: recoverable heterogeneity.
 ============================================================================
 5. THE DIRICHLET PROCESS ESTIMATOR
 ============================================================================
-  (20,000 sweeps in 17.0 s)
+  (20,000 sweeps in 17.3 s)
 <bayes_ph>  Dirichlet Process partial-homogeneity posterior
 
   Cells           : 7
@@ -417,6 +421,6 @@ Reading: recoverable heterogeneity.
        9     17     17
 
   120 checks: 120 passed, 0 failed
-  phdid 0.1.0 | R 4.6.1 | 2026-08-20
+  phdid 0.1.0 | R 4.6.1 | 2026-08-28
   ledger written to mpdta_replication_ledger.csv
 
