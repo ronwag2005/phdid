@@ -140,14 +140,14 @@ Reading: recoverable heterogeneity.
   [PASS] even singleton cells gain precision (Gauss-Markov borrowing)
 
   agglomeration path:
- m   deviance rss     bic cross_group_pairs merge_cost
- 1 2.5287e+01  NA 27.2330                 0  42.847765
- 2 1.6801e+01  NA 20.6924                12   5.529099
- 3 6.9365e+00  NA 12.7742                14   4.050945
- 4 1.0222e+00  NA  8.8059                17   0.794080
- 5 7.1890e-01  NA 10.4485                19   0.685969
- 6 5.7446e-02  NA 11.7329                20   0.078747
- 7 1.0658e-14  NA 13.6214                21         NA
+ m   deviance rss     bic cross_group_pairs merge_cost pair_product
+ 1 2.5287e+01  NA 27.2330                 0  42.847765           12
+ 2 1.6801e+01  NA 20.6924                12   5.529099            2
+ 3 6.9365e+00  NA 12.7742                14   4.050945            3
+ 4 1.0222e+00  NA  8.8059                17   0.794080            2
+ 5 7.1890e-01  NA 10.4485                19   0.685969            1
+ 6 5.7446e-02  NA 11.7329                20   0.078747            1
+ 7 1.0658e-14  NA 13.6214                21         NA           NA
   [PASS] path has K rows  (     7 vs      7)
   [PASS] deviance is monotone in m
   [PASS] deviance vanishes at the flexible end  (1.0658e-14 vs      0)
@@ -164,7 +164,7 @@ Reading: recoverable heterogeneity.
 ============================================================================
 5. THE DIRICHLET PROCESS ESTIMATOR
 ============================================================================
-  (20,000 sweeps in 17.3 s)
+  (20,000 sweeps in 19.1 s)
 <bayes_ph>  Dirichlet Process partial-homogeneity posterior
 
   Cells           : 7
@@ -321,15 +321,15 @@ Reading: recoverable heterogeneity.
      is the default (Remark 1, Appendix E).
 
   sensitivity to alpha:
- alpha    term estimate conf.low conf.high m_mean prior_m
-   0.1 overall -0.01701 -0.04377  0.007188  1.497  0.4263
-   0.5 overall -0.02186 -0.04675  0.002799  1.945  1.3540
-   1.0 overall -0.02434 -0.04827 -0.001462  2.209  2.0794
-   2.0 overall -0.02611 -0.05166 -0.002636  2.494  3.0082
-   5.0 overall -0.02923 -0.05386 -0.004848  3.110  4.3773
-  14.0 overall -0.03265 -0.05628 -0.009581  4.079  5.6765
-  50.0 overall -0.03665 -0.05994 -0.013519  5.535  6.5514
- 100.0 overall -0.03834 -0.06147 -0.014202  6.100  6.7659
+ alpha    term estimate conf.low conf.high     m prior_m
+   0.1 overall -0.01701 -0.04377  0.007188 1.497  0.4263
+   0.5 overall -0.02186 -0.04675  0.002799 1.945  1.3540
+   1.0 overall -0.02434 -0.04827 -0.001462 2.209  2.0794
+   2.0 overall -0.02611 -0.05166 -0.002636 2.494  3.0082
+   5.0 overall -0.02923 -0.05386 -0.004848 3.110  4.3773
+  14.0 overall -0.03265 -0.05628 -0.009581 4.079  5.6765
+  50.0 overall -0.03665 -0.05994 -0.013519 5.535  6.5514
+ 100.0 overall -0.03834 -0.06147 -0.014202 6.100  6.7659
 
   anchors: pooled -0.0104, flexible -0.0398
   [PASS] the path is monotone toward the flexible anchor
@@ -339,6 +339,36 @@ Reading: recoverable heterogeneity.
 
   posterior E[# groups] at alpha = 14: 4.08  (BIC selected 4)
   [PASS] alpha ~ 14 reproduces the BIC group count (paper 5.1)
+
+  per-cell paths
+
+  DP posterior CATTs across alpha:
+      term alpha=0.1  alpha=1  alpha=14 alpha=100
+ 2004:2004   -0.0108 -0.01047 -0.014054   -0.0185
+ 2004:2005   -0.0139 -0.02032 -0.049042   -0.0710
+ 2004:2006   -0.0355 -0.06168 -0.101847   -0.1284
+ 2004:2007   -0.0200 -0.03229 -0.065416   -0.0913
+ 2006:2006   -0.0094 -0.00617 -0.000386    0.0029
+ 2006:2007   -0.0233 -0.03415 -0.039382   -0.0406
+ 2007:2007   -0.0171 -0.02183 -0.025039   -0.0254
+
+  l0 grouped CATTs across the agglomeration path:
+      term     m=1      m=2     m=3     m=4      m=5      m=6      m=7
+ 2004:2004 -0.0104 -0.00772 -0.0142 -0.0285 -0.02509 -0.02366 -0.01937
+ 2004:2005 -0.0104 -0.08172 -0.0771 -0.0871 -0.08487 -0.08148 -0.07832
+ 2004:2006 -0.0104 -0.08172 -0.1341 -0.1401 -0.13801 -0.14008 -0.13627
+ 2004:2007 -0.0104 -0.08172 -0.0771 -0.0871 -0.08487 -0.10178 -0.10081
+ 2006:2006 -0.0104 -0.00772 -0.0142  0.0106  0.00658  0.00453  0.00466
+ 2006:2007 -0.0104 -0.00772 -0.0142 -0.0285 -0.03716 -0.04089 -0.04122
+ 2007:2007 -0.0104 -0.00772 -0.0142 -0.0285 -0.02509 -0.02366 -0.02605
+  [PASS] per-cell alpha path has one row per (alpha, cell)  (    28 vs     28)
+  [PASS] per-cell l0 path visits every group count  (     1,      2,      3,      4,      5,      6,      7 vs      1,      2,      3,      4,      5,      6,      7)
+  [PASS] at m = K the l0 path returns the flexible estimates  (-0.019372, -0.078319, -0.13627, -0.10081, 0.0046609, -0.041224, -0.026054 vs -0.019372, -0.078319, -0.13627, -0.10081, 0.0046609, -0.041224, -0.026054)
+  [PASS] at m = 1 the l0 path returns the pooled value  (     1 vs      1)
+  [PASS] cells spread out as alpha grows
+
+  group counts unreachable by any single lambda: 5
+  [PASS] lambda path reaches both extremes
 
 ============================================================================
 8. ANALYTIC IDENTITIES THE THEORY FORCES
@@ -393,13 +423,15 @@ Reading: recoverable heterogeneity.
 ============================================================================
 10. FIGURES
 ============================================================================
-  [PASS] all six figures written
+  [PASS] all eight figures written
   [PASS] no figure is empty
 
   wrote:
+    figures/mpdta_alpha_cells.png
     figures/mpdta_alpha_sensitivity.png
     figures/mpdta_coclustering.png
     figures/mpdta_effects.png
+    figures/mpdta_l0_cells.png
     figures/mpdta_l0_path.png
     figures/mpdta_placebo_band.png
     figures/sim_variance.png 
@@ -416,11 +448,11 @@ Reading: recoverable heterogeneity.
        4     20     20
        5     26     26
        6      8      8
-       7     10     10
+       7     16     16
        8      7      7
        9     17     17
 
-  120 checks: 120 passed, 0 failed
-  phdid 0.1.0 | R 4.6.1 | 2026-08-28
+  126 checks: 126 passed, 0 failed
+  phdid 0.1.0 | R 4.6.1 | 2026-09-05
   ledger written to mpdta_replication_ledger.csv
 

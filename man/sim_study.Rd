@@ -67,6 +67,6 @@ sim_study(des, m_star = 2, delta = 6, R = 10,
 }
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences, Tables 2 to 5.
+Arora, P. and Wagle, R. (2026). Tables 2 to 5.
+See \code{citation("phdid")} for the full reference.
 }

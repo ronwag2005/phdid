@@ -85,8 +85,8 @@
 #'   diagnostics).
 #'
 #' @references
-#' Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-#' Difference-in-Differences, Section 3.
+#' Arora, P. and Wagle, R. (2026). Section 3.
+#' See \code{citation("phdid")} for the full reference.
 #'
 #' Neal, R. M. (2000). Markov Chain Sampling Methods for Dirichlet Process
 #' Mixture Models. \emph{JCGS} 9(2), 249--265.

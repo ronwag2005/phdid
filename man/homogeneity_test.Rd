@@ -75,6 +75,6 @@ d0 <- ph_data(rnorm(8, 0.05, 0.02), Sigma = 0.02^2 * (0.3 + 0.7 * diag(8)))
 homogeneity_test(d0)
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences, Sections 5.1 and 5.2.3.
+Arora, P. and Wagle, R. (2026). Sections 5.1 and 5.2.3.
+See \code{citation("phdid")} for the full reference.
 }

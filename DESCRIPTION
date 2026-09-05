@@ -6,38 +6,40 @@ Authors@R: c(
            role = c("aut", "cre", "cph")),
     person("Parush", "Arora",
            role = c("aut", "cph")))
-Description: Estimation and specification testing for staggered
-    difference-in-differences designs under partial homogeneity of the
-    cohort-time average treatment effects (CATTs). Implements the Dirichlet
-    Process mixture estimator ('Bayes-PH') via a collapsed Gibbs sampler,
-    which marginalizes over the unknown partition of the cohort-time cells
-    and reports co-clustering probabilities, and the 'l0'-penalized
-    partial-homogeneity estimator ('l0-PH'), which arises as the
-    fixed-variance maximum a posteriori partition under a pairwise
-    partition prior. Also provides specification tests for whether the
-    cohort-time effects carry recoverable heterogeneity at all, sampler
-    diagnostics including exact partition enumeration for small designs,
-    and a calibrated partial-homogeneity data-generating process. All
-    estimators accept a vector of first-stage cohort-time effects together
-    with their joint sampling covariance, so any heterogeneity-robust
-    first-stage estimator may be used. Methods are described in Arora and
-    Wagle (2026), "Partial Homogeneity in Staggered
-    Difference-in-Differences".
+Description: In staggered difference-in-differences designs the treatment
+    effect is a vector of cohort-time effects rather than a single number.
+    Estimating each separately is unbiased but imprecise when some are equal,
+    while pooling them all is precise but biased under genuine heterogeneity.
+    This package treats the choice as a partition-selection problem on the
+    cohort-time cells and provides two estimators for it: a Dirichlet process
+    mixture fitted by a collapsed Gibbs sampler, whose posterior marginalises
+    over the unknown partition and reports co-clustering probabilities, and an
+    'L0'-penalised estimator that returns a single partition and arises as the
+    fixed-variance maximum a posteriori solution of the same model. Also
+    provides tests for whether the cohort-time effects carry recoverable
+    heterogeneity at all, sampler diagnostics including exact enumeration of
+    the partition posterior for small designs, regularisation paths for both
+    estimators, and a calibrated data-generating process. All estimators accept
+    a vector of first-stage cohort-time effects with their joint covariance, so
+    any heterogeneity-robust first-stage estimator may be used. Methods are
+    described in Arora and Wagle (2026)
+    <https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/>
+    and <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.1.0)
 Imports:
-    stats,
-    utils,
     graphics,
-    grDevices
+    grDevices,
+    stats,
+    utils
 Suggests:
     did (>= 2.1.0),
-    testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://github.com/ronwag2005/phdid

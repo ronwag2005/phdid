@@ -24,3 +24,8 @@ co-clustering matrix says how firmly the data support each such statement.
 A diffuse matrix is not a failure of the method: with few, correlated cells
 it is the correct report that the fine grouping is genuinely uncertain.
 }
+\examples{
+d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+fit <- bayes_ph(d, alpha = 1, iters = 500, burn = 100, seed = 1)
+round(coclustering(fit), 2)
+}

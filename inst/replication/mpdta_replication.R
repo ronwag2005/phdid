@@ -483,13 +483,57 @@ check("heavy pooling pulls the effect toward the pooled anchor",
 check("large alpha approaches the flexible anchor",
       abs(sens$estimate[nrow(sens)] - anchors[["flexible"]]) < 0.01, section = "7")
 check("posterior group count rises with alpha",
-      cor(sens$alpha, sens$m_mean, method = "spearman") > 0.9, section = "7")
+      cor(sens$alpha, sens$m, method = "spearman") > 0.9, section = "7")
 ## Paper 5.1: at alpha ~ 14 the posterior E[m] matches the 4 groups BIC selected.
-a14 <- sens$m_mean[sens$alpha == 14]
+a14 <- sens$m[sens$alpha == 14]
 cat(sprintf("\n  posterior E[# groups] at alpha = 14: %.2f  (BIC selected %d)\n",
             a14, fit_l0$m))
 check("alpha ~ 14 reproduces the BIC group count (paper 5.1)",
       abs(a14 - 4) < 1.0, section = "7")
+
+## ---- per-cell regularisation paths ----
+cat("\n  per-cell paths\n")
+sens_cells <- alpha_sensitivity(d, alpha_grid = c(0.1, 1, 14, 100),
+                                type = "cells", iters = 2000, burn = 400,
+                                seed = 5)
+wide_a <- stats::reshape(sens_cells[, c("alpha", "term", "estimate")],
+                         idvar = "term", timevar = "alpha",
+                         direction = "wide")
+names(wide_a) <- sub("estimate.", "alpha=", names(wide_a), fixed = TRUE)
+cat("\n  DP posterior CATTs across alpha:\n")
+print(wide_a, row.names = FALSE, digits = 3)
+
+lam_cells <- lambda_sensitivity(d, type = "cells", by = "m")
+wide_l <- stats::reshape(lam_cells[, c("m", "term", "estimate")],
+                         idvar = "term", timevar = "m", direction = "wide")
+names(wide_l) <- sub("estimate.", "m=", names(wide_l), fixed = TRUE)
+cat("\n  l0 grouped CATTs across the agglomeration path:\n")
+print(wide_l, row.names = FALSE, digits = 3)
+
+check("per-cell alpha path has one row per (alpha, cell)",
+      nrow(sens_cells), 4L * d$K, section = "7")
+check("per-cell l0 path visits every group count",
+      sort(unique(lam_cells$m)), seq_len(d$K), section = "7")
+check("at m = K the l0 path returns the flexible estimates",
+      lam_cells$estimate[lam_cells$m == d$K][
+        match(d$cells$label, lam_cells$term[lam_cells$m == d$K])],
+      d$tau, tol = 1e-10, section = "7")
+check("at m = 1 the l0 path returns the pooled value",
+      length(unique(round(lam_cells$estimate[lam_cells$m == 1L], 12))), 1L,
+      section = "7")
+check("cells spread out as alpha grows",
+      diff(range(sens_cells$estimate[sens_cells$alpha == 100])) >
+        diff(range(sens_cells$estimate[sens_cells$alpha == 0.1])),
+      section = "7")
+## The lambda-indexed path can skip group counts the m-indexed one visits,
+## because the stopping rule's effective threshold is not monotone in the
+## merge order. Record that rather than hide it.
+lam_by_lambda <- lambda_sensitivity(d, type = "overall", by = "lambda")
+skipped <- setdiff(seq_len(d$K), unique(lam_by_lambda$m))
+cat(sprintf("\n  group counts unreachable by any single lambda: %s\n",
+            if (length(skipped)) paste(skipped, collapse = ", ") else "none"))
+check("lambda path reaches both extremes",
+      all(c(1L, d$K) %in% lam_by_lambda$m), section = "7")
 
 ###############################################################################
 banner(8, "ANALYTIC IDENTITIES THE THEORY FORCES")
@@ -601,7 +645,15 @@ plot_coclustering(fit_b, digits = 2)
 dev.off()
 
 png(file.path(FIGDIR, "mpdta_alpha_sensitivity.png"), 1500, 1500, res = 200)
-plot_alpha_sensitivity(sens)
+plot_sensitivity(sens)
+dev.off()
+
+png(file.path(FIGDIR, "mpdta_alpha_cells.png"), 1600, 1000, res = 200)
+plot_sensitivity(sens_cells)
+dev.off()
+
+png(file.path(FIGDIR, "mpdta_l0_cells.png"), 1600, 1000, res = 200)
+plot_sensitivity(lam_cells)
 dev.off()
 
 png(file.path(FIGDIR, "mpdta_l0_path.png"), 1500, 950, res = 200)
@@ -617,7 +669,7 @@ plot_sim_study(sim, "var_ratio")
 dev.off()
 
 figs <- list.files(FIGDIR, pattern = "\\.png$", full.names = TRUE)
-check("all six figures written", length(figs) >= 6L, section = "10")
+check("all eight figures written", length(figs) >= 8L, section = "10")
 check("no figure is empty", all(file.size(figs) > 5000), section = "10")
 cat("\n  wrote:\n"); cat(paste0("    ", figs, collapse = "\n"), "\n")
 

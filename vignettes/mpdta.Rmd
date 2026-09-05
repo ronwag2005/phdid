@@ -34,7 +34,7 @@ data(mpdta, package = "did")
 
 `phdid` does not estimate cohort-time effects itself. It takes them from
 whichever heterogeneity-robust estimator suits the design, together with their
-**joint** sampling covariance. Here that is the Callaway–Sant'Anna estimator,
+**joint** sampling covariance. Here that is the Callaway-Sant'Anna estimator,
 whose influence functions give the exact covariance.
 
 Fit with `bstrap = FALSE` so that the analytical covariance is computed.
@@ -93,8 +93,8 @@ cohorts' effects, the 2004 cohort's larger mature effects, its peak, and the
 lone positive cell.
 
 Pooling roughly halves the variance of the cells that share a group. Notice
-that even the singleton cells gain precision — in a non-orthogonal design the
-Gauss–Markov estimator borrows strength across the correlated cells, which is
+that even the singleton cells gain precision -- in a non-orthogonal design the
+Gauss-Markov estimator borrows strength across the correlated cells, which is
 why Proposition 1's dominance is not confined to groups of size two or more.
 
 ```{r l0-plot}
@@ -110,7 +110,7 @@ rbind(
 )
 ```
 
-The substantive conclusion — a roughly 4% teen-employment reduction — survives,
+The substantive conclusion -- a roughly 4% teen-employment reduction -- survives,
 while the estimates are summarised by a handful of interpretable levels.
 
 ## Inference that admits the partition is uncertain
@@ -142,7 +142,7 @@ and with the 2004:2005 effect at 0.78, so a low-effect cluster is a robust
 feature. The large mature 2004 effects are more distinct, with the peak
 2004:2006 cell co-clustering with every other cell at 0.53 or below.
 
-The matrix is more diffuse than any single partition. That is not a failure —
+The matrix is more diffuse than any single partition. That is not a failure --
 it is the correct report that with only seven correlated cells the finer
 grouping is genuinely uncertain. This is the honest reading the co-clustering
 is meant to deliver: a recurring coarse structure with calibrated uncertainty
@@ -194,10 +194,10 @@ sens <- alpha_sensitivity(
   iters = 4000, burn = 1000, seed = 3
 )
 sens
-plot_alpha_sensitivity(sens)
+plot_sensitivity(sens)
 ```
 
-The effect slides monotonically from about −0.017 under heavy pooling toward
+The effect slides monotonically from about -0.017 under heavy pooling toward
 the flexible estimate as `alpha` grows, and is bounded away from zero only for
 `alpha` above roughly 1. As a reference point, the BIC pass above selected four
 groups, which the posterior expected number of groups matches at `alpha`
@@ -205,9 +205,53 @@ around 14.
 
 That is offered as a reference, not a recipe. Choosing `alpha` from the data
 turns the prior into a data-dependent object, with the usual consequences of
-empirical Bayes — understated posterior uncertainty and a double use of the
-data — so showing the sensitivity is preferable to committing to a single
+empirical Bayes -- understated posterior uncertainty and a double use of the
+data -- so showing the sensitivity is preferable to committing to a single
 value.
+
+## Watching the individual effects, not just the aggregate
+
+The path above is the *overall* effect. It is reassuringly stable, but that
+stability is partly a property of aggregation: the paper notes that the ATT
+tolerates a wide range of penalties while the cohort-time effects do not. To
+see what the regularisation is actually doing, ask for the same path per cell.
+
+```{r alpha-cells, fig.height = 5}
+sens_cells <- alpha_sensitivity(
+  d, alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100),
+  type = "cells", iters = 4000, burn = 1000, seed = 5
+)
+plot_sensitivity(sens_cells)
+```
+
+Every cell starts at the fully pooled value on the left and fans out toward its
+flexible estimate as `alpha` grows. Cells whose lines stay together are the ones
+the model keeps merging; the peak 2004:2006 effect separates earliest, which is
+the same message the co-clustering matrix gave.
+
+The `l0` estimator has the same structure, indexed by its penalty instead. Its
+path is a step function, so it is easier to read indexed by the number of
+groups, which visits every partition on the agglomeration path:
+
+```{r lambda-cells, fig.height = 5}
+lam <- lambda_sensitivity(d, type = "cells", by = "m")
+plot_sensitivity(lam)
+```
+
+Reading right to left, this is the agglomeration in reverse: at `m = 7` the
+lines are the seven flexible estimates, and each step merges one more pair until
+everything meets at the pooled value.
+
+One caution specific to the `l0` path. Indexing by `lambda` rather than by `m`
+can skip group counts entirely: the stopping rule compares each merge cost
+against `lambda * |A| * |B|`, and that factor grows as groups absorb one
+another, so the effective threshold is not monotone in the merge order. On this
+data the thresholds run 0.079, 0.686, 0.397, 1.350, 2.765, 3.571 -- so no value
+of `lambda` selects five groups. Use `by = "m"` when you want the complete path.
+
+Note also that these `l0` bands narrow as the penalty tightens, because they
+condition on the selected partition being correct. The Bayesian bands above do
+not have this problem: they average over partitions.
 
 ## The event-study reading
 
@@ -233,4 +277,4 @@ Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
 Difference-in-Differences.
 
 Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
-Multiple Time Periods. *Journal of Econometrics* 225(2), 200–230.
+Multiple Time Periods. *Journal of Econometrics* 225(2), 200-230.

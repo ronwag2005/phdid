@@ -24,8 +24,8 @@
 #'   probabilities.
 #'
 #' @references
-#' Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-#' Difference-in-Differences, Appendix E and eq. (25).
+#' Arora, P. and Wagle, R. (2026). Appendix E and eq. (25).
+#' See \code{citation("phdid")} for the full reference.
 #'
 #' @export
 #' @examples

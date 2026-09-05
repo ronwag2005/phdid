@@ -434,7 +434,7 @@ footer p { max-width: var(--measure); }
     <span><b>License</b> MIT</span>
     <span><b>Authors</b> Rohan Wagle, Parush Arora</span>
     <span><b>Requires</b> R &ge; 4.1</span>
-    <span><b>Exports</b> 25 functions</span>
+    <span><b>Exports</b> 26 functions</span>
   </div>
 </header>
 
@@ -859,12 +859,65 @@ ph_rhat(fit)
 </div>
 
 <div class="entry">
-<h3><code>alpha_sensitivity()</code></h3>
+<h3><code>alpha_sensitivity()</code> and <code>lambda_sensitivity()</code></h3>
 <div class="sig">alpha_sensitivity(object,
                   alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100),
-                  type = "overall", ..., seed = NULL)</div>
-<p>Refits across a grid of concentration values and traces the aggregate, its credible band, and the posterior expected number of groups. Returns a data frame with an <code>anchors</code> attribute holding the pooled and flexible reference values; pass it to <code>plot_alpha_sensitivity()</code>.</p>
-<p>Reporting the path rather than a single value is the paper's own recommendation. Choosing <code>alpha</code> from the data turns the prior into a data-dependent object, with the usual empirical-Bayes consequences &mdash; understated posterior uncertainty and a double use of the data.</p>
+                  type = "overall", level = 0.95, ..., seed = NULL)
+
+lambda_sensitivity(object, lambda_grid = NULL, type = "overall",
+                   by = c("lambda", "m"), level = 0.95, n_bic = NULL, ...)</div>
+<p>Both estimators have one knob that slides them between full pooling and the
+fully flexible fit &mdash; the concentration <code>alpha</code> for the DP model, the
+penalty <code>lambda</code> for &#8467;<sub>0</sub>. These trace what the knob does.</p>
+
+<h4>Aggregate or per cell</h4>
+<p>With <code>type = "overall"</code> each row is one tuning value and the estimand is
+the overall ATT. With <code>type = "cells"</code> the path is reported <strong>for every
+cohort-time effect separately</strong>, one row per (tuning value, cell).</p>
+<p>The per-cell view is usually the more informative one, and for a specific
+reason: the aggregate is famously robust to over-pooling, so a flat overall path
+can hide cells that move a great deal. On the Callaway&ndash;Sant'Anna data the
+overall effect barely shifts across most of the range, while the individual
+effects travel from the pooled value to their flexible estimates:</p>
+<pre><code>lambda_sensitivity(d, type = "cells", by = "m")
+
+<span class="c">#&gt;      term     m=1      m=2     m=3     m=4      m=5      m=6      m=7</span>
+<span class="c">#&gt; 2004:2004 -0.0104 -0.00772 -0.0142 -0.0285 -0.02509 -0.02366 -0.01937</span>
+<span class="c">#&gt; 2004:2005 -0.0104 -0.08172 -0.0771 -0.0871 -0.08487 -0.08148 -0.07832</span>
+<span class="c">#&gt; 2004:2006 -0.0104 -0.08172 -0.1341 -0.1401 -0.13801 -0.14008 -0.13627</span>
+<span class="c">#&gt; 2004:2007 -0.0104 -0.08172 -0.0771 -0.0871 -0.08487 -0.10178 -0.10081</span>
+<span class="c">#&gt; 2006:2006 -0.0104 -0.00772 -0.0142  0.0106  0.00658  0.00453  0.00466</span>
+<span class="c">#&gt; 2006:2007 -0.0104 -0.00772 -0.0142 -0.0285 -0.03716 -0.04089 -0.04122</span>
+<span class="c">#&gt; 2007:2007 -0.0104 -0.00772 -0.0142 -0.0285 -0.02509 -0.02366 -0.02605</span></code></pre>
+<p>Read right to left, that is the agglomeration in reverse: at <code>m = 7</code> the
+values are the seven flexible estimates, and each step merges one more pair until
+everything meets at the pooled value. Lines that converge are the cells the
+method is merging, and where they meet is the penalty at which it does so.</p>
+
+<div class="note care">
+  <div class="hd">Some group counts are unreachable by any lambda</div>
+  <p>Indexing by <code>lambda</code> and by <code>m</code> are genuinely different paths, and the
+  first can skip values the second visits. The stopping rule merges while a
+  pair's cost falls below <code>lambda &times; |A| &times; |B|</code>, and that factor grows as
+  groups absorb one another, so the effective per-merge threshold is not
+  monotone in the merge order. When a later merge is cheaper in threshold terms
+  than an earlier one, raising <code>lambda</code> past the earlier merge triggers both at
+  once.</p>
+  <p>On the paper's first application this is not hypothetical: the thresholds run
+  0.079, 0.686, 0.397, 1.350, 2.765, 3.571, so <strong>no value of <code>lambda</code>
+  selects five groups</strong>. Pass <code>by = "m"</code> to walk the path one merge at a time
+  and visit every count from <code>K</code> down to 1.</p>
+</div>
+
+<p>One asymmetry worth noting when reading the two paths side by side: the
+&#8467;<sub>0</sub> bands <em>narrow</em> as the penalty tightens, because they condition on
+the selected partition being correct. The Bayesian bands do not, because they
+average over partitions.</p>
+
+<p>Reporting the path rather than a single value is the paper's own
+recommendation. Choosing the tuning parameter from the data turns it into a
+data-dependent object, with the usual empirical-Bayes consequences &mdash;
+understated posterior uncertainty and a double use of the data.</p>
 </div>
 
 <div class="entry">
@@ -933,7 +986,7 @@ ph_rhat(fit)
   <tbody>
     <tr><td><code>plot(l0_fit)</code></td><td>cell effects with intervals, coloured by group, with bars marking the grouped effects</td></tr>
     <tr><td><code>plot(bayes_fit)</code><br><code>plot_coclustering()</code></td><td>the co-clustering heatmap; darker cells group together more often. <code>digits</code> overlays the probabilities</td></tr>
-    <tr><td><code>plot_alpha_sensitivity()</code></td><td>the aggregate and its band across <code>alpha</code>, against pooled and flexible anchors, with the group count below</td></tr>
+    <tr><td><code>plot_sensitivity()</code></td><td>a regularisation path. For an aggregate table, the estimate and its band against the pooled and flexible anchors with the group count below; for a per-cell table, one line per cohort-time effect, labelled at the right edge</td></tr>
     <tr><td><code>plot_l0_path()</code></td><td>BIC and deviance along the agglomeration path, with the selected point marked</td></tr>
     <tr><td><code>plot_placebo_band()</code></td><td>cell effects sorted against the spread expected under a common effect. Estimates inside the band mean no recoverable heterogeneity</td></tr>
     <tr><td><code>plot_sim_study()</code></td><td>Monte Carlo results against the true number of distinct effects</td></tr>
@@ -1038,11 +1091,12 @@ ph_rhat(fit)
 <h2 id="refs">References and citation</h2>
 
 <p>The methods implemented here are joint work by <strong>Parush Arora</strong> and <strong>Rohan Wagle</strong> (Department of Economics, Ashoka University). The simulation and application code that this package generalizes was written by Parush Arora; the package itself is written and maintained by Rohan Wagle. Both are copyright holders under the MIT license.</p>
+<p>Cite the paper: <strong>Arora, Parush and Rohan Wagle (2026), &ldquo;A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference&rdquo;, Ashoka University Economics Discussion Paper 166.</strong> <code>citation("phdid")</code> returns this along with the software entry.</p>
 
 <pre><code>citation("phdid")</code></pre>
 
 <ul>
-  <li>Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered Difference-in-Differences.</li>
+  <li>Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference. <em>Ashoka University Economics Discussion Paper 166</em>. <a href="https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/">Landing page</a>.</li>
   <li>Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with Multiple Time Periods. <em>Journal of Econometrics</em> 225(2), 200&ndash;230.</li>
   <li>Cengiz, D., Dube, A., Lindner, A. and Zipperer, B. (2019). The Effect of Minimum Wages on Low-Wage Jobs. <em>Quarterly Journal of Economics</em> 134(3), 1405&ndash;1454.</li>
   <li>Neal, R. M. (2000). Markov Chain Sampling Methods for Dirichlet Process Mixture Models. <em>JCGS</em> 9(2), 249&ndash;265.</li>

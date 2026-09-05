@@ -61,6 +61,6 @@ fit
 sqrt(diag(fit$vcov)) / sqrt(diag(d$Sigma))
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences. Eq. (12), (50), (55) and Appendix B.
+Arora, P. and Wagle, R. (2026). Eq. (12), (50), (55) and Appendix B.
+See \code{citation("phdid")} for the full reference.
 }

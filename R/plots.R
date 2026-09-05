@@ -105,58 +105,138 @@ plot_coclustering <- function(x, sort = TRUE,
 plot.bayes_ph <- function(x, ...) plot_coclustering(x, ...)
 
 
-#' Plot sensitivity to the concentration parameter
+#' Plot a regularisation path
 #'
-#' Figure 5: the aggregate effect and its credible band across `alpha`, against
-#' the fully pooled and fully flexible anchors, with the posterior expected
-#' number of groups below. Where the path is flat the choice of `alpha` does
-#' not matter; where it slides, report the path rather than a single value.
+#' Draws the table returned by [alpha_sensitivity()] or [lambda_sensitivity()].
+#' The two views answer different questions.
 #'
-#' @param x the data frame returned by [alpha_sensitivity()].
-#' @param term which aggregated term to plot, when the sensitivity was run on a
-#'   multi-term aggregation.
-#' @param ... unused.
+#' With an aggregate table (`type = "overall"` and friends) the top panel shows
+#' the estimate and its band against the fully pooled and fully flexible
+#' anchors, and the lower panel the number of groups. Where the path is flat the
+#' tuning parameter does not matter; where it slides, report the path rather
+#' than a single value.
+#'
+#' With a per-cell table (`type = "cells"`) each cohort-time effect gets its own
+#' line, drawn from its flexible value on the loose-penalty side toward the
+#' pooled value as the penalty tightens. Lines that converge are cells the
+#' method is merging, and where they meet is the penalty at which it does so.
+#' This is the view that shows what a flat aggregate path can hide: the overall
+#' ATT is robust to over-pooling, while the individual effects are not.
+#'
+#' @param x a data frame from [alpha_sensitivity()] or [lambda_sensitivity()].
+#' @param term for an aggregate table with several terms, which one to plot.
+#' @param band draw the interval band. On a per-cell plot with many cells the
+#'   bands overlap badly, so the default omits them there.
+#' @param label write the cell name at the right edge of each line.
+#' @param col a vector of line colours, recycled across cells.
+#' @param main plot title.
+#' @param ... passed to [graphics::plot()].
 #' @return `x`, invisibly.
 #' @export
-plot_alpha_sensitivity <- function(x, term = NULL, ...) {
+#' @examples
+#' d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+#' plot_sensitivity(lambda_sensitivity(d, type = "cells"))
+plot_sensitivity <- function(x, term = NULL, band = NULL, label = TRUE,
+                             col = c("#1b9e77", "#d95f02", "#7570b3",
+                                     "#e7298a", "#66a61e", "#e6ab02",
+                                     "#a6761d"),
+                             main = NULL, ...) {
+  param <- attr(x, "param")
+  if (is.null(param)) {
+    stop("`x` does not look like a sensitivity table; use ",
+         "alpha_sensitivity() or lambda_sensitivity().", call. = FALSE)
+  }
+  if (identical(attr(x, "type"), "cells")) {
+    plot_sensitivity_cells(x, param, band, label, col, main, ...)
+  } else {
+    plot_sensitivity_aggregate(x, param, term, main, ...)
+  }
+}
+
+#' @noRd
+plot_sensitivity_aggregate <- function(x, param, term, main, ...) {
   if (!is.null(term)) x <- x[x$term == term, , drop = FALSE]
   if (length(unique(x$term)) > 1L) {
-    stop("The sensitivity table holds several terms; pick one with `term`.",
-         call. = FALSE)
+    stop("The table holds several terms; pick one with `term`.", call. = FALSE)
   }
   anchors <- attr(x, "anchors")
+  tune <- x[[param]]
+  logx <- if (all(tune > 0)) "x" else ""
 
-  op <- graphics::par(mfrow = c(2, 1), mar = c(4, 4, 2, 1))
+  op <- graphics::par(mfrow = c(2, 1), mar = c(4, 4, 2.5, 1))
   on.exit(graphics::par(op), add = TRUE)
 
+  if (is.null(main)) {
+    main <- sprintf("Sensitivity to %s", param)
+  }
   ylim <- range(x$conf.low, x$conf.high, anchors, na.rm = TRUE)
-  graphics::plot(x$alpha, x$estimate, type = "n", log = "x", ylim = ylim,
-                 xlab = expression(alpha ~ "(concentration)"),
-                 ylab = "aggregate effect",
-                 main = "Sensitivity to the DP concentration")
-  graphics::polygon(c(x$alpha, rev(x$alpha)),
-                    c(x$conf.low, rev(x$conf.high)),
+  graphics::plot(tune, x$estimate, type = "n", log = logx, ylim = ylim,
+                 xlab = param, ylab = "estimate", main = main, ...)
+  graphics::polygon(c(tune, rev(tune)), c(x$conf.low, rev(x$conf.high)),
                     col = grDevices::adjustcolor("steelblue", 0.2),
                     border = NA)
-  graphics::lines(x$alpha, x$estimate, lwd = 2, col = "steelblue")
+  graphics::lines(tune, x$estimate, lwd = 2, col = "steelblue")
   if (!is.null(anchors)) {
     graphics::abline(h = anchors[["pooled"]], lty = 3, col = "firebrick")
     graphics::abline(h = anchors[["flexible"]], lty = 2, col = "navy")
-    graphics::legend("topright", c("posterior", "pooled", "flexible"),
+    graphics::legend("topright", c("estimate", "pooled", "flexible"),
                      col = c("steelblue", "firebrick", "navy"),
                      lty = c(1, 3, 2), lwd = c(2, 1, 1), bty = "n")
   }
 
-  graphics::plot(x$alpha, x$m_mean, type = "b", pch = 19, log = "x",
-                 xlab = expression(alpha), ylab = "posterior E[# groups]",
-                 main = "")
-  graphics::lines(x$alpha, x$prior_m, lty = 2, col = "grey50")
-  graphics::legend("topleft", c("posterior", "prior E[m]"),
-                   col = c("black", "grey50"), lty = c(1, 2), pch = c(19, NA),
-                   bty = "n")
+  graphics::plot(tune, x$m, type = "b", pch = 19, log = logx,
+                 xlab = param, ylab = "groups", main = "")
+  if (!is.null(x$prior_m)) {
+    graphics::lines(tune, x$prior_m, lty = 2, col = "grey50")
+    graphics::legend("topleft", c("posterior", "prior E[m]"),
+                     col = c("black", "grey50"), lty = c(1, 2),
+                     pch = c(19, NA), bty = "n")
+  }
   invisible(x)
 }
 
+#' @noRd
+plot_sensitivity_cells <- function(x, param, band, label, col, main, ...) {
+  cells <- unique(x$term)
+  K <- length(cells)
+  if (is.null(band)) band <- K <= 6L
+  cols <- rep(col, length.out = K)
+  tune <- sort(unique(x[[param]]))
+  logx <- if (all(tune > 0)) "x" else ""
+
+  op <- graphics::par(mar = c(4, 4, 2.5, if (label) 6 else 1))
+  on.exit(graphics::par(op), add = TRUE)
+
+  if (is.null(main)) {
+    main <- sprintf("Cohort-time effects across %s", param)
+  }
+  ylim <- range(if (band) c(x$conf.low, x$conf.high) else x$estimate,
+                attr(x, "flexible"), attr(x, "pooled"), na.rm = TRUE)
+
+  graphics::plot(range(tune), ylim, type = "n", log = logx,
+                 xlab = param, ylab = "effect", main = main, ...)
+  graphics::abline(h = attr(x, "pooled"), lty = 3, col = "firebrick")
+  graphics::abline(h = 0, lty = 3, col = "grey60")
+
+  for (i in seq_len(K)) {
+    s <- x[x$term == cells[i], , drop = FALSE]
+    s <- s[order(s[[param]]), ]
+    if (band) {
+      graphics::polygon(c(s[[param]], rev(s[[param]])),
+                        c(s$conf.low, rev(s$conf.high)),
+                        col = grDevices::adjustcolor(cols[i], 0.13),
+                        border = NA)
+    }
+    graphics::lines(s[[param]], s$estimate, lwd = 2, col = cols[i])
+    if (label) {
+      graphics::text(max(tune), s$estimate[nrow(s)], paste0(" ", cells[i]),
+                     col = cols[i], cex = 0.7, adj = 0, xpd = NA)
+    }
+  }
+  graphics::legend("bottomleft", "fully pooled", col = "firebrick", lty = 3,
+                   bty = "n", cex = 0.8)
+  invisible(x)
+}
 
 #' Plot the l0 solution path
 #'
@@ -168,6 +248,9 @@ plot_alpha_sensitivity <- function(x, term = NULL, ...) {
 #' @param ... unused.
 #' @return `x`, invisibly.
 #' @export
+#' @examples
+#' d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+#' plot_l0_path(l0_ph(d))
 plot_l0_path <- function(x, ...) {
   stopifnot(inherits(x, "l0_ph"))
   p <- x$path
@@ -209,6 +292,9 @@ plot_l0_path <- function(x, ...) {
 #' @param ... passed to [graphics::plot()].
 #' @return `x`, invisibly.
 #' @export
+#' @examples
+#' d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+#' plot_placebo_band(homogeneity_test(d))
 plot_placebo_band <- function(x, level = 0.95,
                               main = "Cell effects against the noise band",
                               xlab = "cell (sorted by effect)",
@@ -262,6 +348,15 @@ plot_placebo_band <- function(x, level = 0.95,
 #' @param ... unused.
 #' @return `x`, invisibly.
 #' @export
+#' @examples
+#' \donttest{
+#' des <- ph_design(N = 300, T = 6, cohorts = c(0, 3, 5))
+#' res <- do.call(rbind, lapply(c(1, 3), function(m) {
+#'   sim_study(des, m_star = m, delta = 6, R = 5,
+#'             methods = c("flexible", "oracle"), progress = FALSE, seed = m)
+#' }))
+#' plot_sim_study(res)
+#' }
 plot_sim_study <- function(x, y_var = "var_ratio", ...) {
   if (!y_var %in% names(x)) {
     stop(sprintf("`%s` is not a column of the results table.", y_var),

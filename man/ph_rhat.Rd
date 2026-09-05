@@ -34,6 +34,6 @@ fit <- bayes_ph(d, alpha = 1, iters = 1000, burn = 200, chains = 4, seed = 1)
 ph_rhat(fit)
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences, Appendix E.
+Arora, P. and Wagle, R. (2026). Appendix E.
+See \code{citation("phdid")} for the full reference.
 }

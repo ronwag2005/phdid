@@ -22,3 +22,13 @@ Figure 1: average sampling variance of the cohort-time estimates against
 partial-homogeneity region and carry a selection overhead when every cell is
 genuinely distinct.
 }
+\examples{
+\donttest{
+des <- ph_design(N = 300, T = 6, cohorts = c(0, 3, 5))
+res <- do.call(rbind, lapply(c(1, 3), function(m) {
+  sim_study(des, m_star = m, delta = 6, R = 5,
+            methods = c("flexible", "oracle"), progress = FALSE, seed = m)
+}))
+plot_sim_study(res)
+}
+}

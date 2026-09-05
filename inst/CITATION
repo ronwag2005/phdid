@@ -1,15 +1,27 @@
-citHeader("To cite phdid in publications, please cite the paper the methods come from:")
+citHeader(
+  "phdid implements the methods of Arora and Wagle (2026). Please cite the",
+  "paper, and the software as well if the implementation itself matters to",
+  "your work."
+)
 
 bibentry(
-  bibtype  = "Unpublished",
-  title    = "Partial Homogeneity in Staggered Difference-in-Differences",
+  bibtype  = "TechReport",
+  title    = "A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference",
   author   = c(person("Parush", "Arora"), person("Rohan", "Wagle")),
   year     = "2026",
-  note     = "Working paper, Department of Economics, Ashoka University",
+  month    = "jul",
+  institution = "Ashoka University",
+  type     = "Economics Discussion Paper",
+  number   = "166",
+  url      = "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/",
+  note     = "Also available on SSRN: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083",
   textVersion = paste(
     "Arora, Parush and Rohan Wagle (2026).",
-    "Partial Homogeneity in Staggered Difference-in-Differences.",
-    "Working paper, Department of Economics, Ashoka University."
+    "A Bayesian Approach to Partial Homogeneity in Staggered",
+    "Difference-in-Difference.",
+    "Ashoka University Economics Discussion Paper 166.",
+    "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/",
+    "SSRN: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
   )
 )
 
@@ -23,6 +35,7 @@ bibentry(
   textVersion = paste(
     "Wagle, Rohan and Parush Arora (2026).",
     "phdid: Partial Homogeneity in Staggered Difference-in-Differences.",
-    "R package version 0.1.0. https://github.com/ronwag2005/phdid"
+    "R package version 0.1.0.",
+    "https://github.com/ronwag2005/phdid"
   )
 )

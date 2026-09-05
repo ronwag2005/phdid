@@ -19,3 +19,7 @@ Figure 3 (left): how the fit and the criteria move along the agglomeration
 path, indexed by the number of groups. Small \code{m} is a strong penalty. The
 dashed line marks the selected point.
 }
+\examples{
+d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+plot_l0_path(l0_ph(d))
+}

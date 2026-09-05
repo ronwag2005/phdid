@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite both the software and the paper."
+message: "If you use this software, please cite both the paper and the software."
 title: "phdid: Partial Homogeneity in Staggered Difference-in-Differences"
 version: 0.1.0
 license: MIT
@@ -8,6 +8,7 @@ type: software
 authors:
   - family-names: Wagle
     given-names: Rohan
+    email: rohan.wagle_ug2023@ashoka.edu.in
     affiliation: "Department of Economics, Ashoka University"
   - family-names: Arora
     given-names: Parush
@@ -15,10 +16,10 @@ authors:
 abstract: >-
   Estimation and specification testing for staggered difference-in-differences
   designs under partial homogeneity of the cohort-time average treatment
-  effects. Implements a Dirichlet Process mixture estimator via a collapsed
-  Gibbs sampler and an l0-penalised partial-homogeneity estimator, together
-  with specification tests for recoverable heterogeneity and sampler
-  diagnostics including exact partition enumeration.
+  effects. Implements a Dirichlet process mixture estimator via a collapsed
+  Gibbs sampler and an L0-penalised partial-homogeneity estimator, together
+  with tests for recoverable heterogeneity, regularisation paths for both
+  estimators, and sampler diagnostics including exact partition enumeration.
 keywords:
   - difference-in-differences
   - staggered treatment
@@ -27,12 +28,22 @@ keywords:
   - model selection
   - causal inference
   - econometrics
-references:
-  - type: unpublished
-    title: "Partial Homogeneity in Staggered Difference-in-Differences"
-    year: 2026
-    authors:
-      - family-names: Arora
-        given-names: Parush
-      - family-names: Wagle
-        given-names: Rohan
+  - R
+preferred-citation:
+  type: report
+  title: "A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference"
+  year: 2026
+  month: 7
+  institution:
+    name: "Ashoka University"
+  number: "Economics Discussion Paper 166"
+  url: "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/"
+  identifiers:
+    - type: url
+      value: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
+      description: "SSRN posting"
+  authors:
+    - family-names: Arora
+      given-names: Parush
+    - family-names: Wagle
+      given-names: Rohan

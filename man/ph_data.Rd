@@ -152,8 +152,8 @@ d <- ph_data(tau, Sigma, cells = c("2004:2004", "2004:2005",
 d
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences. Lemma 1 and Remark 1.
+Arora, P. and Wagle, R. (2026). Lemma 1 and Remark 1.
+See \code{citation("phdid")} for the full reference.
 }
 \seealso{
 \code{\link[=l0_ph]{l0_ph()}} and \code{\link[=bayes_ph]{bayes_ph()}}, which consume this object.

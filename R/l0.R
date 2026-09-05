@@ -72,8 +72,8 @@
 #'   `selected` (the chosen `m`) and `lambda`.
 #'
 #' @references
-#' Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-#' Difference-in-Differences. Propositions 2 and 3, and Appendix B.
+#' Arora, P. and Wagle, R. (2026). Propositions 2 and 3, and Appendix B.
+#' See \code{citation("phdid")} for the full reference.
 #'
 #' @seealso [bayes_ph()], which averages over partitions instead of committing
 #'   to one, and [homogeneity_test()], which asks whether to group at all.
@@ -131,7 +131,8 @@ l0_ph <- function(object, select = c("bic", "lambda", "m"), lambda = NULL,
     rss = rss,
     bic = bic,
     cross_group_pairs = vapply(path$partitions, cross_group_pairs, numeric(1)),
-    merge_cost = path$merge_cost
+    merge_cost = path$merge_cost,
+    pair_product = path$pair_product
   )
 
   selected <- switch(

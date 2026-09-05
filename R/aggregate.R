@@ -30,8 +30,8 @@
 #'   bounds.
 #'
 #' @references
-#' Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-#' Difference-in-Differences, Section 3.3 and Remark 3.
+#' Arora, P. and Wagle, R. (2026). Section 3.3 and Remark 3.
+#' See \code{citation("phdid")} for the full reference.
 #'
 #' @export
 #' @examples
@@ -157,6 +157,10 @@ aggregator_matrix <- function(object, type, weights) {
 #' @param x a [bayes_ph] object.
 #' @return a K x K matrix with cell labels as dimnames.
 #' @export
+#' @examples
+#' d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+#' fit <- bayes_ph(d, alpha = 1, iters = 500, burn = 100, seed = 1)
+#' round(coclustering(fit), 2)
 coclustering <- function(x) {
   stopifnot(inherits(x, "bayes_ph"))
   P <- x$coclust

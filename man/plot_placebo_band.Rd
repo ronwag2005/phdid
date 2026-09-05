@@ -37,3 +37,7 @@ The band is the central \code{level} interval of the reference distribution: fro
 the supplied placebo estimates when \code{\link[=homogeneity_test]{homogeneity_test()}} was given them, and
 otherwise from the first-stage covariance under the common-effect null.
 }
+\examples{
+d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+plot_placebo_band(homogeneity_test(d))
+}

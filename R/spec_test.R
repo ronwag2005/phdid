@@ -94,8 +94,8 @@
 #'   assessments and a plain reading of which regime the design is in.
 #'
 #' @references
-#' Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-#' Difference-in-Differences, Sections 5.1 and 5.2.3.
+#' Arora, P. and Wagle, R. (2026). Sections 5.1 and 5.2.3.
+#' See \code{citation("phdid")} for the full reference.
 #'
 #' @export
 #' @examples

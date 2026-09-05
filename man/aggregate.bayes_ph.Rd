@@ -66,6 +66,6 @@ aggregate(fit, "overall")
 aggregate(fit, "dynamic")
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences, Section 3.3 and Remark 3.
+Arora, P. and Wagle, R. (2026). Section 3.3 and Remark 3.
+See \code{citation("phdid")} for the full reference.
 }

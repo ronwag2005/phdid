@@ -44,8 +44,8 @@
 #'   book-keeping used by the information criteria.
 #'
 #' @references
-#' Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-#' Difference-in-Differences. Lemma 1 and Remark 1.
+#' Arora, P. and Wagle, R. (2026). Lemma 1 and Remark 1.
+#' See \code{citation("phdid")} for the full reference.
 #'
 #' @seealso [l0_ph()] and [bayes_ph()], which consume this object.
 #' @export

@@ -2,14 +2,26 @@
 % Please edit documentation in R/diagnostics.R
 \name{alpha_sensitivity}
 \alias{alpha_sensitivity}
-\title{Sensitivity of the posterior to the concentration parameter}
+\alias{lambda_sensitivity}
+\title{Regularisation paths: how the estimates move with the tuning parameter}
 \usage{
 alpha_sensitivity(
   object,
   alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100),
   type = "overall",
+  level = 0.95,
   ...,
   seed = NULL
+)
+
+lambda_sensitivity(
+  object,
+  lambda_grid = NULL,
+  type = "overall",
+  by = c("lambda", "m"),
+  level = 0.95,
+  n_bic = NULL,
+  ...
 )
 }
 \arguments{
@@ -17,34 +29,109 @@ alpha_sensitivity(
 
 \item{alpha_grid}{concentration values to trace.}
 
-\item{type}{aggregation passed to \code{\link[=aggregate.bayes_ph]{aggregate.bayes_ph()}}.}
+\item{type}{\code{"overall"} (default), \code{"cells"} for one row per cell, or any
+aggregation accepted by \code{\link[=aggregate.bayes_ph]{aggregate.bayes_ph()}}.}
+
+\item{level}{credible / confidence level.}
 
 \item{...}{further arguments to \code{\link[=bayes_ph]{bayes_ph()}}, such as \code{iters} and \code{burn}.}
 
 \item{seed}{optional integer for reproducibility.}
+
+\item{lambda_grid}{penalty values to trace. \code{NULL} derives a grid from the
+agglomeration path so that every partition the penalty can reach is
+visited.}
+
+\item{by}{index the \eqn{\ell_0} path by the penalty (\code{"lambda"}, the
+default) or by the number of groups (\code{"m"}). See the note below on why
+these are not the same path.}
+
+\item{n_bic}{passed to \code{\link[=l0_ph]{l0_ph()}}.}
 }
 \value{
-A data frame with one row per \code{alpha}, holding the aggregate
-estimate, its credible bounds, and the posterior expected number of
-groups. Plot it with \code{\link[=plot_alpha_sensitivity]{plot_alpha_sensitivity()}}.
+A data frame with one row per tuning value (and per cell when
+\code{type = "cells"}), holding the estimate and its interval bounds. The
+\code{anchors} attribute carries the fully pooled and fully flexible reference
+values, and \code{param} names the tuning parameter. Plot with
+\code{\link[=plot_sensitivity]{plot_sensitivity()}}.
 }
 \description{
-Refits the Dirichlet Process model across a grid of \code{alpha} and traces the
-overall effect, its credible band, and the posterior expected number of
-groups. This is Figure 5 of the paper.
+Both estimators have a single knob that slides them between full pooling and
+the fully flexible fit --- the Dirichlet Process concentration \code{alpha} for
+\code{\link[=bayes_ph]{bayes_ph()}}, and the \eqn{\ell_0} penalty \code{lambda} for \code{\link[=l0_ph]{l0_ph()}}. These
+functions trace what the knob does.
 }
 \details{
-Reporting the path rather than a single \code{alpha} is the paper's own
+Reporting the path rather than a single value is the paper's own
 recommendation, and for a good reason. In its simulation the path is nearly
 flat, so the choice is immaterial; but in its seven-cell application the
 overall effect slides from about -0.017 under heavy pooling to about -0.038
-as the model approaches the flexible fit. Choosing \code{alpha} from the data
-would turn the prior into a data-dependent object, with the usual
+as the model approaches the flexible fit. Choosing the tuning parameter from
+the data would turn it into a data-dependent object, with the usual
 empirical-Bayes consequences of understated posterior uncertainty and a
 double use of the data, so the honest report is the whole path.
+
+\code{lambda_sensitivity()} is the frequentist counterpart. For each penalty it
+refits \code{\link[=l0_ph]{l0_ph()}} under the Appendix B stopping rule and records the grouped
+effects. Because the \eqn{\ell_0} path is a step function --- the selected
+partition changes only when \code{lambda} crosses a merge threshold --- the
+default grid is derived from the agglomeration path itself, so that every
+distinct partition on it is visited exactly once rather than being missed
+between grid points.
+
+Its intervals are the plug-in intervals of \code{\link[=l0_ph]{l0_ph()}} and condition on the
+selected partition being correct, so they narrow as the penalty pools more
+cells even where that pooling is wrong. Remark 3 of the paper is the caveat;
+the Bayesian path does not have this problem because it averages over
+partitions.
 }
+\section{Aggregate or per-cell}{
+
+With \code{type = "overall"} (the default) each row is one value of the tuning
+parameter and the reported estimand is the overall ATT. \code{"dynamic"},
+\code{"group"} and \code{"calendar"} behave the same way for the corresponding
+aggregations.
+
+With \code{type = "cells"} the path is reported \strong{for every cohort-time effect
+separately}, one row per (tuning value, cell). This is usually the more
+informative view: the aggregate is famously robust to over-pooling, so a
+flat overall path can hide cells that move a great deal. Watching the
+individual CATTs collapse toward one another as the penalty tightens shows
+exactly which cells the grouping is merging, and at what point.
+}
+
+\section{Some group counts are unreachable by any lambda}{
+
+Indexing by \code{lambda} and indexing by \code{m} are genuinely different paths, and
+the first can skip values the second visits. The Appendix B stopping rule
+merges while a pair's cost falls below \eqn{\lambda |A| |B|}, and the
+factor \eqn{|A||B|} grows as groups absorb one another. The effective
+per-merge threshold \eqn{\mathrm{cost}/(|A||B|)} is therefore not monotone
+in the merge order, so a later merge can be cheaper in threshold terms than
+an earlier one --- and when that happens, raising \code{lambda} past the earlier
+merge triggers both at once and no value of \code{lambda} selects the partition
+in between.
+
+On the paper's first application this is not hypothetical: the thresholds
+run 0.079, 0.686, 0.397, 1.350, 2.765, 3.571, so nothing between the second
+and third selects five groups. Use \code{by = "m"} to walk the agglomeration path
+one merge at a time, which visits every group count from \code{K} down to 1.
+}
+
 \examples{
 d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
+
+# The overall ATT across the concentration parameter.
 alpha_sensitivity(d, alpha_grid = c(0.5, 1, 5), iters = 400, burn = 100,
                   seed = 1)
+
+# The same path for every cohort-time effect separately.
+alpha_sensitivity(d, alpha_grid = c(0.5, 5), type = "cells",
+                  iters = 400, burn = 100, seed = 1)
+
+# The l0 path, per cell, across the penalty.
+lambda_sensitivity(d, type = "cells")
+}
+\seealso{
+\code{\link[=plot_sensitivity]{plot_sensitivity()}}.
 }

@@ -109,8 +109,8 @@ fit
 fit$path
 }
 \references{
-Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
-Difference-in-Differences. Propositions 2 and 3, and Appendix B.
+Arora, P. and Wagle, R. (2026). Propositions 2 and 3, and Appendix B.
+See \code{citation("phdid")} for the full reference.
 }
 \seealso{
 \code{\link[=bayes_ph]{bayes_ph()}}, which averages over partitions instead of committing
