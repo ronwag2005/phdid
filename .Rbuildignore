@@ -1,10 +1,10 @@
 ^.*\.Rproj$
-^\.Rproj\.user$
+^CITATION\.cff$
 ^LICENSE\.md$
 ^README\.Rmd$
-^\.github$
-^CITATION\.cff$
-^dev$
 ^\.DS_Store$
-^docs$
+^\.Rproj\.user$
+^\.github$
 ^cran-comments\.md$
+^dev$
+^docs$

@@ -12,6 +12,7 @@ authors:
     affiliation: "Department of Economics, Ashoka University"
   - family-names: Arora
     given-names: Parush
+    email: parush.arora@ashoka.edu.in
     affiliation: "Department of Economics, Ashoka University"
 abstract: >-
   Estimation and specification testing for staggered difference-in-differences
@@ -41,7 +42,7 @@ preferred-citation:
   identifiers:
     - type: url
       value: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
-      description: "SSRN posting"
+      description: "SSRN working paper 7207083"
   authors:
     - family-names: Arora
       given-names: Parush

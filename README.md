@@ -3,6 +3,7 @@
 **Partial homogeneity in staggered difference-in-differences.**
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/ronwag2005/phdid/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ronwag2005/phdid/actions/workflows/R-CMD-check.yaml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![R >= 4.1](https://img.shields.io/badge/R-%3E%3D%204.1-blue.svg)](https://cran.r-project.org/)
 <!-- badges: end -->
@@ -123,19 +124,6 @@ prior path, `covariance_check()` for exact vs. diagonal.
 **Simulation** -- `ph_design()`, `ph_truth()`, `ph_sample()`, `sim_study()`,
 reproducing the paper's Monte Carlo tables.
 
-## Validation
-
-The package is checked against the paper rather than against stored output. On
-the Callaway-Sant'Anna minimum-wage data it reproduces Table 6 exactly (all
-seven cells, the four selected groups, the grouped effects, and every variance
-ratio), and the sampler matches the Appendix E exact-enumeration benchmark
-(posterior E[groups] 2.20, overall ATT -0.024 with interval [-0.048, -0.000]).
-The test suite asserts analytic identities -- that the singleton partition
-returns the first stage unchanged, that pooling in a balanced orthogonal design
-divides the variance by the group size, that the micro-panel and two-stage
-routes agree exactly (Lemma 1), and that the Gibbs sampler agrees with exact
-enumeration -- rather than golden numbers.
-
 ## Authorship and citation
 
 The methods implemented here are joint work by **Parush Arora** and **Rohan
@@ -144,12 +132,17 @@ application code that this package generalizes was written by Parush Arora; the
 package itself is written and maintained by Rohan Wagle. Both are copyright
 holders under the MIT license.
 
-If you use `phdid`, please cite the paper:
+If you use `phdid`, please cite the paper. It is available in two places; cite
+whichever version your outlet prefers.
 
 > Arora, Parush and Rohan Wagle (2026). "A Bayesian Approach to Partial
 > Homogeneity in Staggered Difference-in-Difference." Ashoka University
 > Economics Discussion Paper 166.
-> [Ashoka](https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/) | [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083)
+> [Link](https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/)
+
+> Arora, Parush and Rohan Wagle (2026). "A Bayesian Approach to Partial
+> Homogeneity in Staggered Difference-in-Difference." SSRN Working Paper
+> 7207083. [Link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083)
 
 ```r
 citation("phdid")
@@ -159,9 +152,10 @@ citation("phdid")
 
 Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity in
 Staggered Difference-in-Difference. Ashoka University Economics Discussion
-Paper 166.
-<https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/>
-<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083>
+Paper 166. <https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/>
+
+Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity in
+Staggered Difference-in-Difference. SSRN Working Paper 7207083. <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083>
 
 Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
 Multiple Time Periods. *Journal of Econometrics* 225(2), 200-230.

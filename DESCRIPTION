@@ -4,7 +4,7 @@ Version: 0.1.0
 Authors@R: c(
     person("Rohan", "Wagle", email = "rohan.wagle_ug2023@ashoka.edu.in",
            role = c("aut", "cre", "cph")),
-    person("Parush", "Arora",
+    person("Parush", "Arora", email = "parush.arora@ashoka.edu.in",
            role = c("aut", "cph")))
 Description: In staggered difference-in-differences designs the treatment
     effect is a vector of cohort-time effects rather than a single number.

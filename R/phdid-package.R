@@ -49,7 +49,9 @@
 #' Discussion Paper 166.
 #' \url{https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/}
 #'
-#' Also on SSRN: \url{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083}
+#' Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity
+#' in Staggered Difference-in-Difference. SSRN Working Paper 7207083.
+#' \url{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083}
 #'
 #' Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
 #' Multiple Time Periods. \emph{Journal of Econometrics} 225(2), 200--230.

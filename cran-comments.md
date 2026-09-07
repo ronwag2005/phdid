@@ -1,15 +1,17 @@
 ## Test environments
 
 * local: macOS 26.6 (aarch64), R 4.6.1, `R CMD check --as-cran`
+* GitHub Actions: windows-latest (release), ubuntu-latest (devel, release,
+  oldrel-1), macos-latest (release), all with `--as-cran`
 
-<!-- BEFORE SUBMITTING: run the checks below and list the results here.
-     CRAN expects at least one Windows and one Linux result for a new
-     submission; the lines are commented out until they have actually been run.
-
-* win-builder: devel and release
-     devtools::check_win_devel(); devtools::check_win_release()
-* R-hub: windows-x86_64-devel, ubuntu-gcc-release, fedora-clang-devel
-     rhub::rhub_check(platforms = c("windows", "ubuntu-release", "fedora"))
+<!-- BEFORE SUBMITTING
+     1. Push and confirm the GitHub Actions matrix is green, then replace the
+        line above with the concrete results.
+     2. Add a win-builder result, which CRAN maintainers expect to see:
+          devtools::check_win_devel()
+          devtools::check_win_release()
+     3. Optionally add R-hub:
+          rhub::rhub_setup(); rhub::rhub_check()
 -->
 
 ## R CMD check results

@@ -1,37 +1,57 @@
 citHeader(
-  "phdid implements the methods of Arora and Wagle (2026). Please cite the",
-  "paper, and the software as well if the implementation itself matters to",
-  "your work."
+  "phdid implements the methods of Arora and Wagle (2026), which is available",
+  "as an Ashoka University discussion paper and as an SSRN working paper.",
+  "Cite whichever version your outlet prefers, and the software as well if the",
+  "implementation itself matters to your work."
 )
 
 bibentry(
-  bibtype  = "TechReport",
-  title    = "A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference",
-  author   = c(person("Parush", "Arora"), person("Rohan", "Wagle")),
-  year     = "2026",
-  month    = "jul",
+  bibtype     = "TechReport",
+  key         = "arora-wagle-2026-dp",
+  title       = "A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference",
+  author      = c(person("Parush", "Arora"), person("Rohan", "Wagle")),
+  year        = "2026",
+  month       = "jul",
   institution = "Ashoka University",
-  type     = "Economics Discussion Paper",
-  number   = "166",
-  url      = "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/",
-  note     = "Also available on SSRN: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083",
+  type        = "Economics Discussion Paper",
+  number      = "166",
+  url         = "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/",
   textVersion = paste(
     "Arora, Parush and Rohan Wagle (2026).",
     "A Bayesian Approach to Partial Homogeneity in Staggered",
     "Difference-in-Difference.",
     "Ashoka University Economics Discussion Paper 166.",
-    "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/",
-    "SSRN: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
+    "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/"
   )
 )
 
 bibentry(
-  bibtype  = "Manual",
-  title    = "phdid: Partial Homogeneity in Staggered Difference-in-Differences",
-  author   = c(person("Rohan", "Wagle"), person("Parush", "Arora")),
-  year     = "2026",
-  note     = "R package version 0.1.0",
-  url      = "https://github.com/ronwag2005/phdid",
+  bibtype     = "TechReport",
+  key         = "arora-wagle-2026-ssrn",
+  title       = "A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference",
+  author      = c(person("Parush", "Arora"), person("Rohan", "Wagle")),
+  year        = "2026",
+  institution = "Social Science Research Network",
+  type        = "SSRN Working Paper",
+  number      = "7207083",
+  url         = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083",
+  textVersion = paste(
+    "Arora, Parush and Rohan Wagle (2026).",
+    "A Bayesian Approach to Partial Homogeneity in Staggered",
+    "Difference-in-Difference.",
+    "SSRN Working Paper 7207083.",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
+  )
+)
+
+bibentry(
+  bibtype     = "Manual",
+  key         = "phdid-package",
+  title       = "phdid: Partial Homogeneity in Staggered Difference-in-Differences",
+  author      = c(person("Rohan", "Wagle"), person("Parush", "Arora")),
+  year        = "2026",
+  note        = "R package version 0.1.0",
+  url         = "https://github.com/ronwag2005/phdid",
   textVersion = paste(
     "Wagle, Rohan and Parush Arora (2026).",
     "phdid: Partial Homogeneity in Staggered Difference-in-Differences.",
