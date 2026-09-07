@@ -127,9 +127,7 @@ reproducing the paper's Monte Carlo tables.
 ## Authorship and citation
 
 The methods implemented here are joint work by **Parush Arora** and **Rohan
-Wagle** (Department of Economics, Ashoka University). The simulation and
-application code that this package generalizes was written by Parush Arora; the
-package itself is written and maintained by Rohan Wagle. Both are copyright
+Wagle** (Department of Economics, Ashoka University). Both are copyright
 holders under the MIT license.
 
 If you use `phdid`, please cite **both** the Ashoka University discussion paper
