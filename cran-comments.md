@@ -11,12 +11,8 @@ Checked on the submitted sources, all OK:
   * ubuntu-latest, R release
   * ubuntu-latest, R oldrel-1
   * macos-latest, R release
-* R-hub v2: windows (R-devel), linux (R-devel), noSuggests
-
-Additionally checked on an earlier revision of the sources, differing only in
-the fixes listed under "Notes for the reviewer", both OK:
-
-* R-hub v2: macos (R-devel), ubuntu-clang
+* R-hub v2: windows (R-devel), linux (R-devel), macos (R-devel),
+  ubuntu-clang, noSuggests
 
 ## R CMD check results
 
