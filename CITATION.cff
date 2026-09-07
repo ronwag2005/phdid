@@ -42,9 +42,12 @@ preferred-citation:
   number: "Economics Discussion Paper 166"
   url: "https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/"
   identifiers:
-    - type: url
-      value: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
+    - type: doi
+      value: "10.2139/ssrn.7207083"
       description: "SSRN working paper 7207083"
+    - type: url
+      value: "https://ssrn.com/abstract=7207083"
+      description: "SSRN landing page"
   authors:
     - family-names: Arora
       given-names: Parush

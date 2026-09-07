@@ -65,11 +65,10 @@ because `vctrs` fails to load on that toolchain ("symbol bindings not supported
 yet"). This is an upstream incompatibility with the experimental gcc15
 configuration and is unrelated to phdid.
 
-The `Description` field cites the working paper the methods come from. It has
-no DOI yet, so the field carries its two stable landing pages in angle brackets
-as `<https://...>` per the Writing R Extensions guidance on references without
-a DOI. Both URLs point to the same paper, one at the publishing institution and
-one on SSRN.
+The `Description` field cites the working paper the methods come from as
+`<doi:10.2139/ssrn.7207083>`. The paper is posted both as an Ashoka University
+discussion paper and on SSRN; the DOI belongs to the SSRN posting.
+`citation("phdid")` returns both postings and the software entry.
 
 Long-running examples are wrapped in `\donttest{}`. These are the Monte Carlo
 driver `sim_study()` and the plot method that consumes its output; a single

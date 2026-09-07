@@ -141,8 +141,8 @@ and the SSRN working paper:
 > [Link](https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/)
 
 > Arora, Parush and Rohan Wagle (2026). "A Bayesian Approach to Partial
-> Homogeneity in Staggered Difference-in-Difference." SSRN Working Paper
-> 7207083. [Link](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083)
+> Homogeneity in Staggered Difference-in-Difference" (March 01, 2026). SSRN
+> Working Paper 7207083. [SSRN](https://ssrn.com/abstract=7207083) | doi:[10.2139/ssrn.7207083](https://doi.org/10.2139/ssrn.7207083)
 
 ```r
 citation("phdid")
@@ -155,7 +155,8 @@ Staggered Difference-in-Difference. Ashoka University Economics Discussion
 Paper 166. <https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/>
 
 Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity in
-Staggered Difference-in-Difference. SSRN Working Paper 7207083. <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083>
+Staggered Difference-in-Difference (March 01, 2026). SSRN Working Paper 7207083.
+<https://doi.org/10.2139/ssrn.7207083>
 
 Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
 Multiple Time Periods. *Journal of Econometrics* 225(2), 200-230.

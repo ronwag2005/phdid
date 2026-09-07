@@ -30,16 +30,18 @@ bibentry(
   title       = "A Bayesian Approach to Partial Homogeneity in Staggered Difference-in-Difference",
   author      = c(person("Parush", "Arora"), person("Rohan", "Wagle")),
   year        = "2026",
+  month       = "mar",
   institution = "Social Science Research Network",
   type        = "SSRN Working Paper",
   number      = "7207083",
-  url         = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083",
+  doi         = "10.2139/ssrn.7207083",
+  url         = "https://ssrn.com/abstract=7207083",
   textVersion = paste(
     "Arora, Parush and Rohan Wagle (2026).",
     "A Bayesian Approach to Partial Homogeneity in Staggered",
-    "Difference-in-Difference.",
-    "SSRN Working Paper 7207083.",
-    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083"
+    "Difference-in-Difference (March 01, 2026).",
+    "Available at SSRN: https://ssrn.com/abstract=7207083",
+    "or doi:10.2139/ssrn.7207083"
   )
 )
 

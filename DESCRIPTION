@@ -22,9 +22,7 @@ Description: In staggered difference-in-differences designs the treatment
     estimators, and a calibrated data-generating process. All estimators accept
     a vector of first-stage cohort-time effects with their joint covariance, so
     any heterogeneity-robust first-stage estimator may be used. Methods are
-    described in Arora and Wagle (2026)
-    <https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/>
-    and <https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7207083>.
+    described in Arora and Wagle (2026) <doi:10.2139/ssrn.7207083>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
