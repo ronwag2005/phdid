@@ -1,14 +1,17 @@
 ## Test environments
 
+All of the following were run on the submitted sources and returned OK.
+
 * local: macOS 26.6 (aarch64), R 4.6.1 -- `R CMD check --as-cran`
-* GitHub Actions, all `--as-cran`, all OK:
+* GitHub Actions, `--as-cran`, erroring on warnings:
   * windows-latest, R release
-  * ubuntu-latest, R devel / release / oldrel-1
+  * ubuntu-latest, R devel
+  * ubuntu-latest, R release
+  * ubuntu-latest, R oldrel-1
   * macos-latest, R release
-* R-hub v2, all OK: linux (R-devel), windows (R-devel), macos (R-devel),
-  ubuntu-clang
-* win-builder, R-release (R 4.6.1 ucrt, Windows Server 2022): 1 NOTE, described
-  below
+* R-hub v2: windows (R-devel), linux (R-devel), macos (R-devel), ubuntu-clang,
+  noSuggests
+* win-builder: R-devel and R-release
 
 ## R CMD check results
 
@@ -34,20 +37,32 @@ HTML Tidy and V8 installed.
 
 This is a new submission.
 
-Two R-hub containers did not produce a clean result, and neither reflects a
-problem in this package.
+Earlier drafts of this submission were checked and revised in response to three
+findings, all now fixed and re-verified:
 
-`noSuggests` initially failed at "re-building of vignette outputs" with "there
-is no package called 'rmarkdown'". That was a real defect in DESCRIPTION and is
-fixed here: the vignettes use the `knitr::rmarkdown` engine, so per Writing R
-Extensions both packages belong in `VignetteBuilder`, and the field now reads
-`knitr, rmarkdown`.
+* R-hub `noSuggests` failed at "re-building of vignette outputs" with "there is
+  no package called 'rmarkdown'". The vignettes use the `knitr::rmarkdown`
+  engine, so per Writing R Extensions both packages belong in
+  `VignetteBuilder`; the field now reads `knitr, rmarkdown`, and `noSuggests`
+  passes.
+* win-builder R-devel reported `ph_rhat` taking 14.4s in examples. The example
+  ran four MCMC chains, which is inexpensive locally but not on Windows. All
+  MCMC-bearing examples were trimmed; the slowest now runs in well under a
+  second locally and the whole examples block takes about 3s.
+* win-builder reported an invalid file URI for `LICENSE.md` referenced from
+  `README.md`. That file is in `.Rbuildignore`, so the relative link could not
+  resolve in the tarball; the README now uses the full URL.
 
-`gcc15` fails while installing dependencies, before this package is checked at
-all. The suggested package `did` cannot be built there because `vctrs` fails to
-load on that toolchain ("symbol bindings not supported yet"). This is an
-upstream incompatibility between `vctrs` and the experimental gcc15
-configuration, unrelated to phdid.
+Vignette build time was also reduced from about 20 minutes to under a minute by
+shortening the MCMC chains and Monte Carlo replication counts used for
+illustration. The settings that reproduce the paper's published tables remain
+documented inside the vignette.
+
+One R-hub container, `gcc15`, fails while installing dependencies, before this
+package is checked at all: the suggested package `did` cannot be built there
+because `vctrs` fails to load on that toolchain ("symbol bindings not supported
+yet"). This is an upstream incompatibility with the experimental gcc15
+configuration and is unrelated to phdid.
 
 The `Description` field cites the working paper the methods come from. It has
 no DOI yet, so the field carries its two stable landing pages in angle brackets
