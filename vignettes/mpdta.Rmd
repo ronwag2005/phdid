@@ -120,7 +120,7 @@ being correct. With only seven correlated cells that is a strong thing to
 assume. The Dirichlet Process posterior instead averages over partitions.
 
 ```{r bayes}
-fit <- bayes_ph(d, alpha = 1, iters = 20000, burn = 2000, seed = 7,
+fit <- bayes_ph(d, alpha = 1, iters = 6000, burn = 1000, seed = 7,
                 progress = FALSE)
 fit
 ```
@@ -137,10 +137,15 @@ plot(fit)
 ```
 
 The small-effect cells recur together with moderate-to-high probability: the
-2004 impact effect co-clusters with the lone positive 2006:2006 cell at 0.86
-and with the 2004:2005 effect at 0.78, so a low-effect cluster is a robust
+2004 impact effect co-clusters with the lone positive 2006:2006 cell, and with
+the 2004:2005 effect, at around 0.85, so a low-effect cluster is a robust
 feature. The large mature 2004 effects are more distinct, with the peak
-2004:2006 cell co-clustering with every other cell at 0.53 or below.
+2004:2006 cell co-clustering with every other cell at roughly 0.5 or below.
+
+(This vignette uses short chains so that it builds quickly. The reported
+probabilities are therefore a little noisier than the paper's, which uses
+20,000 sweeps; the exact-enumeration comparison below is the check that the
+sampler is nonetheless landing in the right place.)
 
 The matrix is more diffuse than any single partition. That is not a failure --
 it is the correct report that with only seven correlated cells the finer
@@ -176,7 +181,7 @@ The two agree to within Monte Carlo error, which is the Appendix E benchmark.
 It is worth seeing what makes that agreement possible:
 
 ```{r cov-check}
-cmp <- covariance_check(d, alpha = 1, iters = 4000, burn = 1000, seed = 1)
+cmp <- covariance_check(d, alpha = 1, iters = 1500, burn = 400, seed = 1)
 cmp$summary
 ```
 
@@ -190,8 +195,8 @@ report the path.
 
 ```{r alpha, fig.height = 7}
 sens <- alpha_sensitivity(
-  d, alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100),
-  iters = 4000, burn = 1000, seed = 3
+  d, alpha_grid = c(0.1, 0.5, 1, 5, 14, 100),
+  iters = 1500, burn = 400, seed = 3
 )
 sens
 plot_sensitivity(sens)
@@ -202,6 +207,9 @@ the flexible estimate as `alpha` grows, and is bounded away from zero only for
 `alpha` above roughly 1. As a reference point, the BIC pass above selected four
 groups, which the posterior expected number of groups matches at `alpha`
 around 14.
+
+The grid here is coarse and the chains short, again to keep the build fast;
+widen `alpha_grid` and raise `iters` for a publication figure.
 
 That is offered as a reference, not a recipe. Choosing `alpha` from the data
 turns the prior into a data-dependent object, with the usual consequences of
@@ -218,8 +226,8 @@ see what the regularisation is actually doing, ask for the same path per cell.
 
 ```{r alpha-cells, fig.height = 5}
 sens_cells <- alpha_sensitivity(
-  d, alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100),
-  type = "cells", iters = 4000, burn = 1000, seed = 5
+  d, alpha_grid = c(0.1, 0.5, 1, 5, 14, 100),
+  type = "cells", iters = 1500, burn = 400, seed = 5
 )
 plot_sensitivity(sens_cells)
 ```

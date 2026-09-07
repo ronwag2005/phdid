@@ -4,7 +4,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/ronwag2005/phdid/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ronwag2005/phdid/actions/workflows/R-CMD-check.yaml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ronwag2005/phdid/blob/main/LICENSE.md)
 [![R >= 4.1](https://img.shields.io/badge/R-%3E%3D%204.1-blue.svg)](https://cran.r-project.org/)
 <!-- badges: end -->
 
@@ -172,4 +172,4 @@ Regression, and Difference-in-Differences Estimators. *Empirical Economics* 69,
 
 ## License
 
-MIT (c) 2026 Rohan Wagle and Parush Arora. See [LICENSE.md](LICENSE.md).
+MIT (c) 2026 Rohan Wagle and Parush Arora. See [LICENSE.md](https://github.com/ronwag2005/phdid/blob/main/LICENSE.md).

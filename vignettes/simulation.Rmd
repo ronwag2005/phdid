@@ -73,14 +73,16 @@ the sampling variance of the cohort-time effects substantially relative to
 flexible TWFE while remaining essentially unbiased.
 
 The Bayesian estimator dominates the run time, since each replication runs a
-full chain. The paper uses 500 replications; here we use far fewer so the
-vignette builds quickly. Expect noticeably noisier numbers than the published
-tables.
+full chain. The paper uses 500 replications with long chains; this vignette
+uses a handful with short ones so that it builds in seconds rather than
+minutes. Expect the numbers to be noisy -- read the ordering between methods,
+not the individual values. The section at the end gives the settings that
+reproduce a published row.
 
 ```{r sim-main}
 res <- sim_study(
-  des, m_star = 6, delta = 6, R = 25,
-  bayes_args = list(iters = 400, burn = 100),
+  des, m_star = 6, delta = 6, R = 8,
+  bayes_args = list(iters = 250, burn = 50),
   seed = 11, progress = FALSE
 )
 res[, c("method", "var_ratio", "abs_bias", "ari", "cover_CATT", "cover_ATT")]
@@ -109,7 +111,7 @@ effects and vary how far apart they are.
 
 ```{r sim-delta}
 grid <- do.call(rbind, lapply(c(3, 6, 12), function(delta) {
-  sim_study(des, m_star = 6, delta = delta, R = 15,
+  sim_study(des, m_star = 6, delta = delta, R = 6,
             methods = c("flexible", "oracle", "l0"),
             seed = 100 + delta, progress = FALSE)
 }))
@@ -134,9 +136,9 @@ collapses; the posterior averages over partitions and degrades gracefully.
 
 ```{r sim-coverage}
 cov_grid <- do.call(rbind, lapply(c(3, 12), function(delta) {
-  sim_study(des, m_star = 6, delta = delta, R = 15,
+  sim_study(des, m_star = 6, delta = delta, R = 6,
             methods = c("flexible", "l0", "bayes"),
-            bayes_args = list(iters = 400, burn = 100),
+            bayes_args = list(iters = 250, burn = 50),
             seed = 200 + delta, progress = FALSE)
 }))
 cov_grid[, c("method", "delta", "cover_CATT", "len_CATT", "cover_ATT")]
