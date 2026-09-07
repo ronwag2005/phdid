@@ -3,8 +3,7 @@
 Checked on the submitted sources, all OK:
 
 * local: macOS 26.6 (aarch64), R 4.6.1 -- `R CMD check --as-cran`
-* win-builder: R-release (4.6.1) and R-devel (r90498), 1 NOTE each, described
-  below
+* win-builder: R-release (R 4.6.1 ucrt), 1 NOTE, described below
 * GitHub Actions, `--as-cran`, erroring on warnings:
   * windows-latest, R release
   * ubuntu-latest, R devel
@@ -13,6 +12,11 @@ Checked on the submitted sources, all OK:
   * macos-latest, R release
 * R-hub v2: windows (R-devel), linux (R-devel), macos (R-devel),
   ubuntu-clang, noSuggests
+
+R-devel on Windows is covered by the R-hub windows (R-devel) container above.
+A win-builder R-devel run was also completed on an earlier revision of the
+sources, differing only in the `Description` field now citing the paper by DOI;
+it returned the same single NOTE.
 
 ## R CMD check results
 
