@@ -1,17 +1,22 @@
 ## Test environments
 
-All of the following were run on the submitted sources and returned OK.
+Checked on the submitted sources, all OK:
 
 * local: macOS 26.6 (aarch64), R 4.6.1 -- `R CMD check --as-cran`
+* win-builder: R-release (4.6.1) and R-devel (r90498), 1 NOTE each, described
+  below
 * GitHub Actions, `--as-cran`, erroring on warnings:
   * windows-latest, R release
   * ubuntu-latest, R devel
   * ubuntu-latest, R release
   * ubuntu-latest, R oldrel-1
   * macos-latest, R release
-* R-hub v2: windows (R-devel), linux (R-devel), macos (R-devel), ubuntu-clang,
-  noSuggests
-* win-builder: R-devel and R-release
+* R-hub v2: windows (R-devel), linux (R-devel), noSuggests
+
+Additionally checked on an earlier revision of the sources, differing only in
+the fixes listed under "Notes for the reviewer", both OK:
+
+* R-hub v2: macos (R-devel), ubuntu-clang
 
 ## R CMD check results
 
