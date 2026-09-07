@@ -132,8 +132,8 @@ application code that this package generalizes was written by Parush Arora; the
 package itself is written and maintained by Rohan Wagle. Both are copyright
 holders under the MIT license.
 
-If you use `phdid`, please cite the paper. It is available in two places; cite
-whichever version your outlet prefers.
+If you use `phdid`, please cite **both** the Ashoka University discussion paper
+and the SSRN working paper:
 
 > Arora, Parush and Rohan Wagle (2026). "A Bayesian Approach to Partial
 > Homogeneity in Staggered Difference-in-Difference." Ashoka University

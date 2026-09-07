@@ -1,5 +1,7 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite both the paper and the software."
+message: >-
+  If you use this software, please cite both the Ashoka University discussion
+  paper and the SSRN working paper listed below, and the software itself.
 title: "phdid: Partial Homogeneity in Staggered Difference-in-Differences"
 version: 0.1.0
 license: MIT

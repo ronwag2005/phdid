@@ -1,8 +1,7 @@
 citHeader(
-  "phdid implements the methods of Arora and Wagle (2026), which is available",
-  "as an Ashoka University discussion paper and as an SSRN working paper.",
-  "Cite whichever version your outlet prefers, and the software as well if the",
-  "implementation itself matters to your work."
+  "phdid implements the methods of Arora and Wagle (2026). Please cite both",
+  "the Ashoka University discussion paper and the SSRN working paper, and the",
+  "software as well if the implementation itself matters to your work."
 )
 
 bibentry(
