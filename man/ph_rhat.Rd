@@ -30,7 +30,7 @@ reported.
 }
 \examples{
 d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
-fit <- bayes_ph(d, alpha = 1, iters = 1000, burn = 200, chains = 4, seed = 1)
+fit <- bayes_ph(d, alpha = 1, iters = 250, burn = 50, chains = 4, seed = 1)
 ph_rhat(fit)
 }
 \references{

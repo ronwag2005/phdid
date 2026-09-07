@@ -23,7 +23,7 @@
 #' @export
 #' @examples
 #' d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
-#' fit <- bayes_ph(d, alpha = 1, iters = 1000, burn = 200, chains = 4, seed = 1)
+#' fit <- bayes_ph(d, alpha = 1, iters = 250, burn = 50, chains = 4, seed = 1)
 #' ph_rhat(fit)
 ph_rhat <- function(x, split = TRUE) {
   stopifnot(inherits(x, "bayes_ph"))
@@ -184,12 +184,12 @@ print.ph_rhat <- function(x, ...) {
 #' d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
 #'
 #' # The overall ATT across the concentration parameter.
-#' alpha_sensitivity(d, alpha_grid = c(0.5, 1, 5), iters = 400, burn = 100,
+#' alpha_sensitivity(d, alpha_grid = c(0.5, 5), iters = 200, burn = 50,
 #'                   seed = 1)
 #'
 #' # The same path for every cohort-time effect separately.
 #' alpha_sensitivity(d, alpha_grid = c(0.5, 5), type = "cells",
-#'                   iters = 400, burn = 100, seed = 1)
+#'                   iters = 200, burn = 50, seed = 1)
 alpha_sensitivity <- function(object, alpha_grid = c(0.1, 0.25, 0.5, 1, 2, 5,
                                                      10, 25, 50, 100),
                               type = "overall", level = 0.95, ...,

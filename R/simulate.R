@@ -223,8 +223,8 @@ ph_sample <- function(design, tau_true) {
 #' @examples
 #' \donttest{
 #' des <- ph_design(N = 300, T = 6, cohorts = c(0, 3, 5))
-#' sim_study(des, m_star = 2, delta = 6, R = 10,
-#'           bayes_args = list(iters = 200, burn = 50), seed = 1)
+#' sim_study(des, m_star = 2, delta = 6, R = 4,
+#'           bayes_args = list(iters = 150, burn = 30), seed = 1)
 #' }
 sim_study <- function(design, m_star, delta, R = 100L,
                       methods = c("pooled", "flexible", "oracle", "l0",

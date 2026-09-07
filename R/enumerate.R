@@ -34,7 +34,7 @@
 #' ex
 #'
 #' # The sampler should agree with this.
-#' fit <- bayes_ph(d, alpha = 1, iters = 2000, burn = 500, seed = 1)
+#' fit <- bayes_ph(d, alpha = 1, iters = 500, burn = 100, seed = 1)
 #' max(abs(coclustering(fit) - ex$coclust))
 enumerate_partitions <- function(object, alpha = 1, mu0 = NULL,
                                  sigma0_sq = NULL, max_cells = 11L) {

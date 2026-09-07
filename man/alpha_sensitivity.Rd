@@ -122,12 +122,12 @@ one merge at a time, which visits every group count from \code{K} down to 1.
 d <- ph_data(c(0.10, 0.11, 0.42, 0.40), Sigma = 0.02^2 * (0.3 + 0.7 * diag(4)))
 
 # The overall ATT across the concentration parameter.
-alpha_sensitivity(d, alpha_grid = c(0.5, 1, 5), iters = 400, burn = 100,
+alpha_sensitivity(d, alpha_grid = c(0.5, 5), iters = 200, burn = 50,
                   seed = 1)
 
 # The same path for every cohort-time effect separately.
 alpha_sensitivity(d, alpha_grid = c(0.5, 5), type = "cells",
-                  iters = 400, burn = 100, seed = 1)
+                  iters = 200, burn = 50, seed = 1)
 
 # The l0 path, per cell, across the penalty.
 lambda_sensitivity(d, type = "cells")
