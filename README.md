@@ -3,6 +3,8 @@
 **Partial homogeneity in staggered difference-in-differences.**
 
 <!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/phdid)](https://cran.r-project.org/package=phdid)
+[![CRAN checks](https://badges.cranchecks.info/worst/phdid.svg)](https://cran.r-project.org/web/checks/check_results_phdid.html)
 [![R-CMD-check](https://github.com/ronwag2005/phdid/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ronwag2005/phdid/actions/workflows/R-CMD-check.yaml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ronwag2005/phdid/blob/main/LICENSE.md)
 [![R >= 4.1](https://img.shields.io/badge/R-%3E%3D%204.1-blue.svg)](https://cran.r-project.org/)
@@ -22,6 +24,15 @@ to know whether either should be used at all.
 ---
 
 ## Installation
+
+The released version is on CRAN:
+
+```r
+install.packages("phdid")
+```
+
+The development version, with anything merged since the last release, is on
+GitHub:
 
 ```r
 # install.packages("remotes")
@@ -143,7 +154,7 @@ and the SSRN working paper:
 > Working Paper 7207083. [SSRN](https://ssrn.com/abstract=7207083) | doi:[10.2139/ssrn.7207083](https://doi.org/10.2139/ssrn.7207083)
 
 ```r
-citation("phdid")
+citation("phdid")   # returns all three entries, with BibTeX
 ```
 
 ## References

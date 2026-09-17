@@ -1,7 +1,8 @@
 # phdid 0.1.0
 
-First release, implementing Arora and Wagle (2026), "Partial Homogeneity in
-Staggered Difference-in-Differences".
+Released on CRAN 2026-09-15. First release, implementing Arora and Wagle
+(2026), "A Bayesian Approach to Partial Homogeneity in Staggered
+Difference-in-Difference" (doi:10.2139/ssrn.7207083).
 
 ## Estimation
 
@@ -39,9 +40,29 @@ Staggered Difference-in-Differences".
   designs, the Appendix E benchmark.
 * `ph_rhat()` reports Gelman-Rubin statistics and effective sample sizes across
   dispersed chains.
-* `alpha_sensitivity()` traces the posterior across the concentration
-  parameter, and `covariance_check()` compares exact against diagonal handling
-  of the covariance.
+* `covariance_check()` compares exact against diagonal handling of the
+  covariance in the cluster-assignment moves.
+
+## Regularisation paths
+
+* `alpha_sensitivity()` traces the DP estimator across the concentration
+  parameter, and `lambda_sensitivity()` traces the `l0` estimator across its
+  penalty. Both take `type = "cells"`, reporting the path for every cohort-time
+  effect separately rather than only for the aggregate. This is usually the
+  more informative view: the overall ATT is robust to over-pooling, so a flat
+  aggregate path can hide cells that move a great deal.
+* `plot_sensitivity()` draws either table; a per-cell table gets one labelled
+  line per cohort-time effect.
+* `lambda_sensitivity()` can index the `l0` path by the penalty (`by =
+  "lambda"`) or by the number of groups (`by = "m"`). These are different
+  paths: the Appendix B stopping rule compares each merge cost against
+  `lambda * |A| * |B|`, and that factor grows as groups absorb one another, so
+  the effective per-merge threshold is not monotone in the merge order and some
+  group counts are unreachable by any single `lambda`. On the paper's first
+  application the thresholds run 0.079, 0.686, 0.397, 1.350, 2.765, 3.571, so
+  nothing selects five groups. `by = "m"` walks the path one merge at a time.
+* `l0_ph()` returns `pair_product` in its `path`, the `|A| * |B|` of each
+  merge.
 
 ## Simulation
 
@@ -60,33 +81,3 @@ Staggered Difference-in-Differences".
 * `bayes_ph(marginal = "diagonal")` reproduces the faster shortcut used in the
   original replication scripts for the cluster-assignment moves. The default is
   `"exact"`, matching what the paper reports.
-
-## Unreleased
-
-### New
-
-* `lambda_sensitivity()` traces the `l0` estimator across its penalty, the
-  frequentist counterpart of `alpha_sensitivity()`. Index it by `lambda` or, to
-  avoid the gaps described below, by the number of groups with `by = "m"`.
-* Both sensitivity functions take `type = "cells"`, reporting the path for
-  every cohort-time effect separately rather than only for the aggregate. This
-  is usually the more informative view: the overall ATT is robust to
-  over-pooling, so a flat aggregate path can hide cells that move a great deal.
-* `plot_sensitivity()` draws either table, replacing `plot_alpha_sensitivity()`.
-  A per-cell table gets one labelled line per cohort-time effect.
-* `l0_ph()` now returns `pair_product` in its `path`, the `|A| * |B|` of each
-  merge.
-
-### Documented
-
-* Some group counts are unreachable by any single `lambda`. The Appendix B
-  stopping rule compares each merge cost against `lambda * |A| * |B|`, and that
-  factor grows as groups absorb one another, so the effective per-merge
-  threshold is not monotone in the merge order. On the paper's first
-  application the thresholds run 0.079, 0.686, 0.397, 1.350, 2.765, 3.571, so
-  nothing selects five groups. `by = "m"` walks the path one merge at a time.
-
-### Breaking
-
-* `plot_alpha_sensitivity()` is removed in favour of `plot_sensitivity()`,
-  which handles both estimators and both views.
