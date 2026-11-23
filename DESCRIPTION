@@ -1,6 +1,6 @@
 Package: phdid
 Title: Partial Homogeneity in Staggered Difference-in-Differences
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Rohan", "Wagle", email = "rohan.wagle_ug2023@ashoka.edu.in",
            role = c("aut", "cre", "cph")),
@@ -22,7 +22,7 @@ Description: In staggered difference-in-differences designs the treatment
     estimators, and a calibrated data-generating process. All estimators accept
     a vector of first-stage cohort-time effects with their joint covariance, so
     any heterogeneity-robust first-stage estimator may be used. Methods are
-    described in Arora and Wagle (2026) <doi:10.2139/ssrn.7207083>.
+    described in Arora and Wagle (2026) <doi:10.48550/arXiv.2608.08047>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

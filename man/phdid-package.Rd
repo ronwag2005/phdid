@@ -52,14 +52,9 @@ See \code{citation("phdid")}.
 }
 
 \references{
-Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity
-in Staggered Difference-in-Difference. Ashoka University Economics
-Discussion Paper 166.
-\url{https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/}
-
-Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity
-in Staggered Difference-in-Difference. SSRN Working Paper 7207083
-(1 March 2026). \doi{10.2139/ssrn.7207083}
+Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
+Difference-in-Differences. arXiv:2608.08047.
+\doi{10.48550/arXiv.2608.08047}
 
 Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
 Multiple Time Periods. \emph{Journal of Econometrics} 225(2), 200--230.

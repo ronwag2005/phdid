@@ -141,31 +141,21 @@ The methods implemented here are joint work by **Parush Arora** and **Rohan
 Wagle** (Department of Economics, Ashoka University). Both are copyright
 holders under the MIT license.
 
-If you use `phdid`, please cite **both** the Ashoka University discussion paper
-and the SSRN working paper:
+If you use `phdid`, please cite the paper:
 
-> Arora, Parush and Rohan Wagle (2026). "A Bayesian Approach to Partial
-> Homogeneity in Staggered Difference-in-Difference." Ashoka University
-> Economics Discussion Paper 166.
-> [Link](https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/)
-
-> Arora, Parush and Rohan Wagle (2026). "A Bayesian Approach to Partial
-> Homogeneity in Staggered Difference-in-Difference" (March 01, 2026). SSRN
-> Working Paper 7207083. [SSRN](https://ssrn.com/abstract=7207083) | doi:[10.2139/ssrn.7207083](https://doi.org/10.2139/ssrn.7207083)
+> Arora, Parush and Rohan Wagle (2026). "Partial Homogeneity in Staggered
+> Difference-in-Differences." arXiv:2608.08047.
+> [arXiv](https://arxiv.org/abs/2608.08047) | doi:[10.48550/arXiv.2608.08047](https://doi.org/10.48550/arXiv.2608.08047)
 
 ```r
-citation("phdid")   # returns all three entries, with BibTeX
+citation("phdid")   # returns the paper and the software, with BibTeX
 ```
 
 ## References
 
-Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity in
-Staggered Difference-in-Difference. Ashoka University Economics Discussion
-Paper 166. <https://www.ashoka.edu.in/research/a-bayesian-approach-to-partial-homogeneity-in-staggered-difference-in-difference/>
-
-Arora, P. and Wagle, R. (2026). A Bayesian Approach to Partial Homogeneity in
-Staggered Difference-in-Difference (March 01, 2026). SSRN Working Paper 7207083.
-<https://doi.org/10.2139/ssrn.7207083>
+Arora, P. and Wagle, R. (2026). Partial Homogeneity in Staggered
+Difference-in-Differences. arXiv:2608.08047.
+<https://doi.org/10.48550/arXiv.2608.08047>
 
 Callaway, B. and Sant'Anna, P. H. C. (2021). Difference-in-Differences with
 Multiple Time Periods. *Journal of Econometrics* 225(2), 200-230.

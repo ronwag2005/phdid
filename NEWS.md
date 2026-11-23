@@ -1,3 +1,13 @@
+# phdid 0.1.1
+
+* The paper is now cited as Arora and Wagle (2026), "Partial Homogeneity in
+  Staggered Difference-in-Differences", arXiv:2608.08047
+  (doi:10.48550/arXiv.2608.08047). This updates `citation("phdid")`, the
+  `Description` field, the package help page, the README and `CITATION.cff`.
+  The software entry now points to CRAN and takes its version number from the
+  package.
+* No changes to code or results.
+
 # phdid 0.1.0
 
 Released on CRAN 2026-09-15. First release, implementing Arora and Wagle
